@@ -20,21 +20,27 @@ public class ListTest {
         assertEquals(li1.get(6).intValue(), 6);
         assertEquals(li1.indexOf(8), 8);
 
+        // 排序
         li1.sort((a, b) -> (b - a));
 
+        // 遍历
         for (Integer i : li1) {
             System.out.println(i);
         }
 
+        // 流
         li1.stream().map(i -> i * i).forEach(System.out::println);
 
         List<Integer> li2 = new LinkedList<>();
         for (int i = 0; i < 10; i++) {
             li2.add(i);
         }
+
+        // 删除
         li2.removeIf(i -> (i % 2 == 0)); // ArrayList can not remove
         System.out.println(li2);
 
+        // 最大最小
         assertEquals(li2.stream().max((a, b) -> (a - b)).get().intValue(), 9);
         assertEquals(li2.stream().min((a, b) -> (b - a)).get().intValue(), 9);
 
