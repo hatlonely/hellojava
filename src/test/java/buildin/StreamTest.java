@@ -2,16 +2,35 @@ package buildin;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
 import org.junit.Test;
+
+class Point implements Serializable {
+    private static final long serialVersionUID = 1420672609912364160L;
+
+    int x;
+    int y;
+
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
 
 public class StreamTest {
     @Test
@@ -52,6 +71,32 @@ public class StreamTest {
                     System.out.println(scanner.next());
                 }
                 scanner.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testIoStream() {
+        try {
+            {
+                ObjectOutputStream oos = new ObjectOutputStream(
+                        new BufferedOutputStream(new FileOutputStream("/tmp/test.bin")));
+                oos.writeInt(123456789);
+                oos.writeObject("hello world");
+                oos.writeObject(new Point(3, 4));
+                oos.close();
+            }
+            {
+                ObjectInputStream ois = new ObjectInputStream(
+                        new BufferedInputStream(new FileInputStream("/tmp/test.bin")));
+                assertEquals(ois.readInt(), 123456789);
+                assertEquals((String) ois.readObject(), "hello world");
+                Point point = (Point) ois.readObject();
+                assertEquals(point.x, 3);
+                assertEquals(point.y, 4);
+                ois.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
