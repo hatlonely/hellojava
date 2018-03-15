@@ -1,7 +1,10 @@
 package buildin;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class StringTest {
     @Test
@@ -21,8 +24,8 @@ public class StringTest {
         assertEquals("0123456789".substring(4), "456789");
         assertEquals("0123456789".substring(3, 6), "345");
         assertEquals("stay hungry, stay foolish".replace("stay", "keep"), "keep hungry, keep foolish");
-        assertArrayEquals("java golang swift".split(" "), new String[]{"java", "golang", "swift"});
-        assertEquals(String.join("|", new String[]{"java", "golang", "swift"}), "java|golang|swift");
+        assertArrayEquals("java golang swift".split(" "), new String[] { "java", "golang", "swift" });
+        assertEquals(String.join("|", new String[] { "java", "golang", "swift" }), "java|golang|swift");
     }
 
     @Test
