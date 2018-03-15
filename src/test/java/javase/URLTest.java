@@ -1,4 +1,4 @@
-package buildin;
+package javase;
 
 import static org.junit.Assert.assertEquals;
 
