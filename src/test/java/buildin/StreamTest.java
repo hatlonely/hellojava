@@ -1,11 +1,14 @@
 package buildin;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -33,6 +36,28 @@ class Point implements Serializable {
 }
 
 public class StreamTest {
+    @Test
+    public void testFile() {
+        {
+            File file = new File("/tmp/test.txt");
+            assertFalse(file.isDirectory());
+            assertTrue(file.isFile());
+            assertTrue(file.exists());
+            assertEquals(file.getName(), "test.txt");
+            assertEquals(file.getAbsolutePath(), "/tmp/test.txt");
+            assertEquals(file.getParent(), "/tmp");
+            assertEquals(file.getPath(), "/tmp/test.txt");
+        }
+        {
+            System.out.println(System.getProperty("user.dir"));
+
+            File directory = new File(".");
+            for (File file : directory.listFiles()) {
+                System.out.println(file.getName());
+            }
+        }
+    }
+
     @Test
     public void testReaderWriter() {
         try {
