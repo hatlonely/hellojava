@@ -11,6 +11,8 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,9 +61,11 @@ class Person {
 public class JacksonTest {
     @Test
     public void testJsonNode() throws Exception {
-        String jsonString = "{\"name\": \"hatlonely\", \"birthday\": \"2018-03-18 15:26:37\", \"mails\": [\"hatlonely@foxmail.com\", \"hatlonely@gmail.com\"]}";
+        String jsonString = "{\"name\": \"hatlonely\" /* comment */, \"birthday\": \"2018-03-18 15:26:37\", \"mails\": [\"hatlonely@foxmail.com\", \"hatlonely@gmail.com\"]}";
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        JsonFactory jsonFactory = new JsonFactory();
+        jsonFactory.enable(Feature.ALLOW_COMMENTS);
+        ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
         JsonNode node = objectMapper.readTree(jsonString);
 
         assertThat(node.path("name").asText(), equalTo("hatlonely"));
