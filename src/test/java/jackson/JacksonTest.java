@@ -76,7 +76,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testMarshal() throws Exception {
+    public void testUnmarshal() throws Exception {
         String jsonString = "{\"name\": \"hatlonely\", \"birthday\": \"2018-03-18 15:26:37\", \"mails\": [\"hatlonely@foxmail.com\", \"hatlonely@gmail.com\"]}";
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -91,7 +91,7 @@ public class JacksonTest {
     }
 
     @Test
-    public void testUnmarshal() throws Exception {
+    public void testMarshal() throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
