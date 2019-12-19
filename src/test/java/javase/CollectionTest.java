@@ -62,6 +62,10 @@ public class CollectionTest {
             assertTrue(c.retainAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9)));
             assertArrayEquals(c.toArray(), new Integer[]{1, 3, 5, 7, 9});
 
+            // stream
+            assertEquals(c.stream().max((a, b) -> (a - b)).get().intValue(), 9);
+            c.stream().map(i -> i * i).forEach(System.out::println);
+
             // 清空
             c.clear();
             assertTrue(c.isEmpty());
