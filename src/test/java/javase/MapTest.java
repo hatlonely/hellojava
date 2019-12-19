@@ -14,7 +14,9 @@ public class MapTest {
                 new TreeMap<String, String>(),
                 new HashMap<String, String>(),
                 new Hashtable<String, String>(),
-                new ConcurrentHashMap<String, String>()
+                new ConcurrentHashMap<String, String>(),
+//                new IdentityHashMap<String, String>(),
+                new WeakHashMap<String, String>()
         )) {
             assertTrue(m.isEmpty());
             for (int i = 0; i < 5; i++) {
