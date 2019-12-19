@@ -17,9 +17,7 @@ public class QueueTest {
                 new ConcurrentLinkedDeque<Integer>(),
                 new PriorityQueue<Integer>()
         )) {
-            Assertions.assertThrows(NoSuchElementException.class, () -> {
-                q.remove();
-            });
+            Assertions.assertThrows(NoSuchElementException.class, () -> q.remove());
             for (int i = 0; i < 10; i++) {
                 q.add(i);
             }
