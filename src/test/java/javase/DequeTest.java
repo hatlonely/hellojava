@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,7 +16,8 @@ public class DequeTest {
         for (final Deque<Integer> q : Arrays.asList(
                 new LinkedList<Integer>(),
                 new ArrayDeque<Integer>(),
-                new ConcurrentLinkedDeque<Integer>()
+                new ConcurrentLinkedDeque<Integer>(),
+                new LinkedBlockingDeque<Integer>()
         )) {
             // add / remove / get
             q.clear();
