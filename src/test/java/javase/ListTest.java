@@ -13,6 +13,10 @@ public class ListTest {
     @Test
     public void testList() {
         List<Integer> li1 = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9); // ArrayList
+        List<Integer> li2 = new LinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            li2.add(i);
+        }
 
         assertFalse(li1.isEmpty());
         assertTrue(li1.contains(3));
@@ -30,11 +34,6 @@ public class ListTest {
 
         // 流
         li1.stream().map(i -> i * i).forEach(System.out::println);
-
-        List<Integer> li2 = new LinkedList<>();
-        for (int i = 0; i < 10; i++) {
-            li2.add(i);
-        }
 
         // 删除
         li2.removeIf(i -> (i % 2 == 0)); // ArrayList can not remove
