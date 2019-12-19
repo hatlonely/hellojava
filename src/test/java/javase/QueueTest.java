@@ -11,12 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class QueueTest {
     @Test
     public void testQueue() {
-        for (Queue<Integer> q : Arrays.asList(
+        for (final Queue<Integer> q : Arrays.asList(
                 new LinkedList<Integer>(),
                 new ArrayDeque<Integer>(),
                 new ConcurrentLinkedDeque<Integer>(),
                 new PriorityQueue<Integer>()
         )) {
+            // add / remove / element
             q.clear();
             assertThrows(NoSuchElementException.class, () -> q.remove());
             for (int i = 0; i < 10; i++) {
@@ -27,6 +28,7 @@ public class QueueTest {
                 assertEquals(q.remove(), Integer.valueOf(i));
             }
 
+            // offer / poll / peek
             q.clear();
             assertEquals(q.poll(), null);
             for (int i = 0; i < 10; i++) {
