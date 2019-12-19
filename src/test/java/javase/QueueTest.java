@@ -1,12 +1,12 @@
 package javase;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QueueTest {
     @Test
@@ -17,7 +17,8 @@ public class QueueTest {
                 new ConcurrentLinkedDeque<Integer>(),
                 new PriorityQueue<Integer>()
         )) {
-            Assertions.assertThrows(NoSuchElementException.class, () -> q.remove());
+            q.clear();
+            assertThrows(NoSuchElementException.class, () -> q.remove());
             for (int i = 0; i < 10; i++) {
                 q.add(i);
             }
@@ -25,8 +26,8 @@ public class QueueTest {
                 assertEquals(q.element(), Integer.valueOf(i));
                 assertEquals(q.remove(), Integer.valueOf(i));
             }
-            q.clear();
 
+            q.clear();
             assertEquals(q.poll(), null);
             for (int i = 0; i < 10; i++) {
                 q.offer(i);
@@ -35,7 +36,6 @@ public class QueueTest {
                 assertEquals(q.peek(), Integer.valueOf(i));
                 assertEquals(q.poll(), Integer.valueOf(i));
             }
-            q.clear();
         }
     }
 
