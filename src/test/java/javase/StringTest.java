@@ -1,10 +1,11 @@
 package javase;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+
+import java.util.StringJoiner;
+import java.util.StringTokenizer;
+
+import static org.junit.Assert.*;
 
 public class StringTest {
     @Test
@@ -45,5 +46,23 @@ public class StringTest {
         assertEquals(Integer.toString(123456), "123456");
         assertEquals(Integer.toHexString(123456), "1e240");
         assertEquals(Double.toString(123.456), "123.456");
+    }
+
+    @Test
+    public void testStringJoiner() {
+        final StringJoiner sj = new StringJoiner(", ", "[", "]");
+        sj.add("one");
+        sj.add("two");
+        sj.add("three");
+        assertEquals(sj.toString(), "[one, two, three]");
+    }
+
+    @Test
+    public void testStringTokenizer() {
+        // StringTokenizer是由于兼容性原因而保留的遗留类，不建议使用，使用 String.split 代替
+        final StringTokenizer tokens = new StringTokenizer("one, two, three", ", ");
+        while (tokens.hasMoreTokens()) {
+            System.out.println(tokens.nextToken());
+        }
     }
 }
