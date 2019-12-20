@@ -15,7 +15,6 @@ public class MapTest {
                 new HashMap<String, String>(),
                 new Hashtable<String, String>(),
                 new ConcurrentHashMap<String, String>(),
-//                new IdentityHashMap<String, String>(),
                 new WeakHashMap<String, String>()
         )) {
             assertTrue(m.isEmpty());
@@ -73,5 +72,23 @@ public class MapTest {
 
             assertEquals(m.merge("key5", "nv", (ov, nv) -> (ov + nv)), "val5nv");
         }
+    }
+
+    @Test
+    public void testIdentityHashMapMap() {
+        // 判断同一个 key 的条件是 key == e.key，必须是同一个对象才认为相等
+        final IdentityHashMap<String, String> m = new IdentityHashMap<>();
+        for (int i = 0; i < 5; i++) {
+            m.put("key" + i, "val" + i);
+        }
+        for (int i = 0; i < 5; i++) {
+            m.put("key" + i, "val" + i + i);
+        }
+        System.out.println(m);
+        System.out.println(m.get("key0"));
+
+        final String key = "key0";
+        m.put(key, "val000");
+        assertEquals(m.get(key), "val000");
     }
 }
