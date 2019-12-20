@@ -1,35 +1,18 @@
 package javase;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-
 import org.junit.Test;
 
-public class DateTimeTest {
-    @Test
-    public void testDateAdd() {
-        {
-            Calendar calendar = Calendar.getInstance();
-            Date d1 = new Date();
-            calendar.setTime(d1);
-            calendar.add(Calendar.DATE, 1);
-            Date d2 = calendar.getTime();
-            System.out.println(d1);
-            System.out.println(d2);
-        }
-        {
-            Date d1 = new Date();
-            LocalDateTime localDateTime = d1.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            Date d2 = Date.from(localDateTime.plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
-            System.out.println(d1);
-            System.out.println(d2);
-        }
-    }
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class DateTimeTest {
     @Test
     public void testTimestamp() {
         System.out.println(new Date().getTime());
@@ -38,15 +21,50 @@ public class DateTimeTest {
     }
 
     @Test
-    public void testDateFormat() {
-        Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(format.format(date));
+    public void testDateFormat() throws Exception {
+        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date d = df.parse("2019-12-20 19:09:59");
+        assertEquals(df.format(d), "2019-12-20 19:09:59");
+    }
 
-        try {
-            System.out.println(format.parse("2018-03-15 21:50:43"));
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Test
+    public void testDate() throws Exception {
+        for (final Date d : Arrays.asList(
+                new Date(),
+                new Date(1576840199L * 1000),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-12-20 19:09:59"),
+                new GregorianCalendar(2019, Calendar.DECEMBER, 20, 19, 9, 59).getTime()
+        )) {
+            System.out.println(d);
+            d.setTime(1576840199L * 1000);
+
+            assertEquals(d.getTime(), 1576840199L * 1000);
+            assertTrue(d.before(new Date()));
+            assertTrue(new Date().after(d));
         }
+    }
+
+    @Test
+    public void testInstant() {
+        for (final Instant i : Arrays.asList(
+                Instant.parse("2019-12-20T19:09:59Z"),
+                Instant.now(),
+                new Date().toInstant()
+        )) {
+            System.out.println(i);
+            System.out.println(i.getEpochSecond());
+            System.out.println(i.minusSeconds(3600));
+            System.out.println(i.plusSeconds(3600));
+        }
+    }
+
+    @Test
+    public void testCalendar() {
+        final Calendar c = Calendar.getInstance();
+        c.set(2019, Calendar.DECEMBER, 20, 19, 9, 59);
+        System.out.println(c);
+        c.add(Calendar.DATE, 2);
+        c.add(Calendar.HOUR, 2);
+        System.out.println(c);
     }
 }
