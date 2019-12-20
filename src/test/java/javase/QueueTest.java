@@ -51,6 +51,36 @@ public class QueueTest {
     }
 
     @Test
+    public void testPriorityQueue() {
+        {
+            final PriorityQueue<Integer> pq = new PriorityQueue<>();
+            for (int i = 0; i < 5; i++) {
+                pq.add(9 - i);
+            }
+            for (int i = 0; i < 5; i++) {
+                pq.add(i);
+            }
+            for (int i = 0; i < 10; i++) {
+                assertEquals(pq.element(), Integer.valueOf(i));
+                assertEquals(pq.remove(), Integer.valueOf(i));
+            }
+        }
+        {
+            final PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> (b - a));
+            for (int i = 0; i < 5; i++) {
+                pq.add(9 - i);
+            }
+            for (int i = 0; i < 5; i++) {
+                pq.add(i);
+            }
+            for (int i = 9; i >= 0; i--) {
+                assertEquals(pq.element(), Integer.valueOf(i));
+                assertEquals(pq.remove(), Integer.valueOf(i));
+            }
+        }
+    }
+
+    @Test
     public void testBlockingQueue() {
         final Queue<Integer> q = new ArrayBlockingQueue<>(10);
         // empty
