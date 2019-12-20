@@ -15,6 +15,7 @@ public class BitSetTest {
         bs.set(1);
         bs.set(12);
         bs.set(123);
+        assertFalse(bs.isEmpty());
         assertTrue(bs.get(1));
         assertTrue(bs.get(12));
         assertTrue(bs.get(123));
