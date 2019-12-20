@@ -13,6 +13,7 @@ public class MapTest {
         for (final Map<String, String> m : Arrays.asList(
                 new TreeMap<String, String>(),
                 new HashMap<String, String>(),
+                new LinkedHashMap<String, String>(),
                 new Hashtable<String, String>(),
                 new ConcurrentHashMap<String, String>(),
                 new WeakHashMap<String, String>()
