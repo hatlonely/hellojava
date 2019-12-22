@@ -1,6 +1,7 @@
 package guava;
 
 import com.google.common.collect.*;
+import com.google.common.primitives.Ints;
 import org.junit.Test;
 
 import java.util.List;
@@ -10,15 +11,31 @@ import java.util.Set;
 
 public class UtilityTest {
     @Test
-    public void testLists() {
-        List<Integer> l1 = Lists.newArrayList();
-        List<Integer> l2 = Lists.newLinkedList();
-        List<Integer> l3 = Lists.newArrayListWithExpectedSize(20);
-        List<Integer> l4 = Lists.newCopyOnWriteArrayList();
+    public void testIterable() {
+        Iterable<Integer> nums = Iterables.concat(
+                Ints.asList(1, 2, 3),
+                Ints.asList(4, 5, 6)
+        );
+    }
 
-        // 笛卡尔乘积
-        List<List<Integer>> ll = Lists.cartesianProduct(Lists.newArrayList(1, 2), Lists.newArrayList(3, 4, 5));
-        System.out.println(ll);
+    @Test
+    public void testLists() {
+        {
+            List<Integer> l1 = Lists.newArrayList();
+            List<Integer> l2 = Lists.newLinkedList();
+            List<Integer> l3 = Lists.newArrayListWithExpectedSize(20);
+            List<Integer> l4 = Lists.newCopyOnWriteArrayList();
+        }
+        {
+            // 笛卡尔乘积
+            List<List<Integer>> ll = Lists.cartesianProduct(Lists.newArrayList(1, 2), Lists.newArrayList(3, 4, 5));
+            System.out.println(ll);
+        }
+        {
+            List<Integer> l = Ints.asList(1, 2, 3, 4, 5);
+            System.out.println(Lists.reverse(l));
+            System.out.println(Lists.partition(l, 3));
+        }
     }
 
     @Test
