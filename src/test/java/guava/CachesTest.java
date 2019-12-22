@@ -2,6 +2,7 @@ package guava;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.Weigher;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -51,5 +52,21 @@ public class CachesTest {
         System.gc();
         assertEquals(cache.getIfPresent("key"), null);
         System.out.println(cache.asMap());
+    }
+
+    @Test
+    public void testWeight() {
+        // 设置权值，当权值大于最大权值时，执行删除
+        Cache<String, String> cache = CacheBuilder.newBuilder()
+                .maximumWeight(10)
+                .removalListener((n) -> System.out.println("remove " + n.getKey()))
+                .weigher((Weigher<String, String>) (k, v) -> k.length())
+                .build();
+
+        cache.put("key111", "val111");
+        cache.put("key1", "val1");
+        cache.put("key11", "val11");
+        cache.put("key2", "val2");
+        cache.put("key", "val2");
     }
 }
