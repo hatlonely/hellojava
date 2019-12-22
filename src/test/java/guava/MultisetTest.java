@@ -17,10 +17,12 @@ public class MultisetTest {
             for (int i = 0; i < 10; i++) {
                 set.add("key" + i);
             }
+            assertEquals(set.size(), 10);
             assertTrue(set.contains("key6"));
             assertFalse(set.contains("key20"));
             assertEquals(set.count("key1"), 1);
-            assertEquals(set.size(), 10);
+            assertEquals(set.add("key1"), true);
+            assertEquals(set.count("key1"), 2);
 
             assertEquals(set.add("key66", 6), 0);
             assertEquals(set.count("key66"), 6);
