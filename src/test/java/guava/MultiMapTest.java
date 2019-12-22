@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MultiMapTest {
     @Test
-    public void testMultiMap() {
+    public void testMultimap() {
         final Multimap<String, String> hm = HashMultimap.create();
         final Multimap<String, String> tm = TreeMultimap.create();
         final Multimap<String, String> lhm = LinkedHashMultimap.create();
