@@ -48,7 +48,7 @@ public class IOTest {
     }
 
     @Test
-    public void testReaderWriter() throws Exception {
+    public void testFileReaderWriter() throws Exception {
         {
             BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
             bw.write("The Universe in a Nutshell");
@@ -88,7 +88,7 @@ public class IOTest {
     }
 
     @Test
-    public void testIOStream() throws Exception {
+    public void testFileStream() throws Exception {
         {
             ObjectOutputStream oos = new ObjectOutputStream(
                     new BufferedOutputStream(new FileOutputStream("/tmp/test.bin")));
@@ -107,5 +107,47 @@ public class IOTest {
             assertEquals(point.y, 4);
             ois.close();
         }
+    }
+
+    @Test
+    public void testCharArray() throws IOException {
+        {
+            ByteArrayOutputStream aos = new ByteArrayOutputStream();
+            aos.write("hello world".getBytes());
+            ByteArrayInputStream ais = new ByteArrayInputStream(aos.toByteArray());
+            assertEquals("hello world", new String(ais.readAllBytes()));
+        }
+        {
+            CharArrayWriter writer = new CharArrayWriter();
+            writer.write("hello world");
+            CharArrayReader reader = new CharArrayReader(writer.toCharArray());
+            char[] buf = new char[11];
+            assertEquals(reader.read(buf), "hello world".length());
+            assertEquals(new String(buf), "hello world");
+        }
+    }
+
+    @Test
+    public void testString() throws IOException {
+        StringWriter writer = new StringWriter();
+        writer.write("hello");
+        writer.write(" ");
+        writer.write("world");
+        writer.write("\n");
+        StringReader reader = new StringReader(writer.getBuffer().toString());
+        char[] buf = new char[11];
+        assertEquals(reader.read(buf), "hello world".length());
+        assertEquals(new String(buf), "hello world");
+    }
+
+    @Test
+    public void testPiped() throws IOException {
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader();
+        pw.connect(pr);
+        pw.write("hello world");
+        char[] buf = new char[11];
+        assertEquals(pr.read(buf), "hello world".length());
+        assertEquals(new String(buf), "hello world");
     }
 }
