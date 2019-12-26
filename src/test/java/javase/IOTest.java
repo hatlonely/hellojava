@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Vector;
 
 import static org.junit.Assert.*;
 
@@ -216,6 +217,21 @@ public class IOTest {
             assertEquals(new String(buf), "hello world");
             pr.unread('b');
             assertEquals(pr.read(), 'b');
+        }
+    }
+
+    @Test
+    public void testSequence() throws IOException {
+        InputStream is1 = new ByteArrayInputStream("abcdefghijklmnopqrstuvwxyz".getBytes());
+        InputStream is2 = new ByteArrayInputStream("0123456789".getBytes());
+
+        Vector<InputStream> vi = new Vector<>();
+        vi.add(is1);
+        vi.add(is2);
+        SequenceInputStream ss = new SequenceInputStream(vi.elements());
+
+        for (int b = ss.read(); b != -1; b = ss.read()) {
+            System.out.println((char) b);
         }
     }
 }
