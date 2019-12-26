@@ -1,5 +1,7 @@
 package javase;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
@@ -25,6 +27,28 @@ class Point implements Serializable {
 
 
 public class IOTest {
+    private static void createFile() throws IOException {
+        IOTest.deleteFile();
+        BufferedWriter bw = Files.newBufferedWriter(Paths.get("/tmp/test.txt"));
+        bw.write("hello world");
+        bw.newLine();
+        bw.close();
+    }
+
+    private static void deleteFile() throws IOException {
+        Files.deleteIfExists(Paths.get("/tmp/test.txt"));
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        IOTest.createFile();
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        IOTest.deleteFile();
+    }
+
     @Test
     public void testFile() {
         {
@@ -142,12 +166,56 @@ public class IOTest {
 
     @Test
     public void testPiped() throws IOException {
-        PipedWriter pw = new PipedWriter();
-        PipedReader pr = new PipedReader();
-        pw.connect(pr);
-        pw.write("hello world");
-        char[] buf = new char[11];
-        assertEquals(pr.read(buf), "hello world".length());
-        assertEquals(new String(buf), "hello world");
+        {
+            PipedInputStream pis = new PipedInputStream();
+            PipedOutputStream pos = new PipedOutputStream();
+            pis.connect(pos);
+            pos.write("hello world".getBytes());
+            byte[] buf = new byte[11];
+            assertEquals(pis.read(buf), "hello world".length());
+            assertEquals(new String(buf), "hello world");
+            pos.close();
+            pis.close();
+        }
+        {
+            PipedWriter pw = new PipedWriter();
+            PipedReader pr = new PipedReader();
+            pw.connect(pr);
+            pw.write("hello world");
+            char[] buf = new char[11];
+            assertEquals(pr.read(buf), "hello world".length());
+            assertEquals(new String(buf), "hello world");
+            pw.close();
+            pr.close();
+        }
+    }
+
+    @Test
+    public void testLineNumberInputStream() throws IOException {
+        LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader("/tmp/test.txt")));
+
+        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+            System.out.println(reader.getLineNumber() + " " + line);
+        }
+    }
+
+    @Test
+    public void testPushBack() throws IOException {
+        {
+            PushbackInputStream pis = new PushbackInputStream(new ByteArrayInputStream("hello world".getBytes()));
+            byte[] buf = new byte[11];
+            assertEquals(pis.read(buf, 0, 11), 11);
+            assertEquals(new String(buf), "hello world");
+            pis.unread('b');
+            assertEquals(pis.read(), 'b');
+        }
+        {
+            PushbackReader pr = new PushbackReader(new CharArrayReader("hello world".toCharArray()));
+            char[] buf = new char[11];
+            assertEquals(pr.read(buf, 0, 11), 11);
+            assertEquals(new String(buf), "hello world");
+            pr.unread('b');
+            assertEquals(pr.read(), 'b');
+        }
     }
 }
