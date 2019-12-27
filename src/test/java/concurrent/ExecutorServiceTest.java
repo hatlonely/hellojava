@@ -18,7 +18,7 @@ public class ExecutorServiceTest {
         // 工作窃取线程池，内部有固定数量（cpu 核数）的线程
         // 如果当前线程的任务完成，会窃取其他线程的任务
         ExecutorService es4 = Executors.newWorkStealingPool();
-        //
+        // 支持延迟执行的线程池
         ScheduledExecutorService es5 = Executors.newSingleThreadScheduledExecutor();
         ScheduledExecutorService es6 = Executors.newScheduledThreadPool(4);
     }
