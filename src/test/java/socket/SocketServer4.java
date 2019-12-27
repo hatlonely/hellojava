@@ -38,23 +38,23 @@ public class SocketServer4 {
                     SocketChannel channel = (SocketChannel) key.channel();
                     ByteBuffer bb = ByteBuffer.allocate(3);
                     CharBuffer cb = CharBuffer.allocate(3);
-
-                    System.out.print("client [" + channel.getRemoteAddress() + "]: ");
+                    StringBuilder sb = new StringBuilder();
                     for (int i = channel.read(bb); i != -1; i = channel.read(bb)) {
                         bb.flip();
                         utf8.decode(bb, cb, true);
                         cb.flip();
                         while (cb.hasRemaining()) {
-                            System.out.print(cb.get());
+                            sb.append(cb.get());
                         }
                         bb.compact();
                         cb.clear();
                     }
-                    System.out.println();
+                    key.attach(sb.toString());
                     key.interestOps(SelectionKey.OP_WRITE);
                     channel.shutdownInput();
                 } else if (key.isWritable()) {
                     SocketChannel channel = (SocketChannel) key.channel();
+                    System.out.println("client [" + channel.getRemoteAddress() + "]: " + key.attachment());
                     ByteBuffer bb = ByteBuffer.wrap("ok".getBytes());
                     channel.write(bb);
                     channel.shutdownOutput();
