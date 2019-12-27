@@ -63,4 +63,37 @@ public class BlockingDequeTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testConcurrentDeque() {
+        // 和 ConcurrentLinkedQueue 一样，只是一个线程安全的 Deque，不具有任何阻塞接口
+        ConcurrentLinkedDeque<Integer> queue = new ConcurrentLinkedDeque<>();
+        ExecutorService es = Executors.newCachedThreadPool();
+
+        for (int i = 0; i < 3; i++) {
+            es.execute(() -> {
+                for (int j = 0; j < 10; j++) {
+                    queue.offerFirst(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                }
+                for (int j = 0; j < 10; j++) {
+                    queue.offerLast(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                }
+                for (int j = 0; j < 10; j++) {
+                    System.out.println("poll " + queue.pollFirst());
+                }
+                for (int j = 0; j < 10; j++) {
+                    System.out.println("poll " + queue.pollLast());
+                }
+            });
+        }
+
+        try {
+            es.shutdown();
+            while (!es.awaitTermination(1, TimeUnit.SECONDS)) {
+                // nothing to do
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

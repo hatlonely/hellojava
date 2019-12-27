@@ -102,4 +102,35 @@ public class BlockingQueueTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testConcurrentQueue() {
+        // 这个 queue 只是一个线程安全的队列，但是并没有提供阻塞接口
+        // 作为生产者消费者队列时，需要自己处理队列为空时候的阻塞，事实上，并不建议用作生产者消费者队列
+        ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
+        ExecutorService es = Executors.newCachedThreadPool();
+
+        for (int i = 0; i < 3; i++) {
+            es.execute(() -> {
+                for (int j = 0; j < 20; j++) {
+                    queue.offer(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                }
+            });
+
+            es.execute(() -> {
+                for (int j = 0; j < 20; j++) {
+                    System.out.println("poll " + queue.poll());
+                }
+            });
+        }
+
+        try {
+            es.shutdown();
+            while (!es.awaitTermination(1, TimeUnit.SECONDS)) {
+                // nothing to do
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
