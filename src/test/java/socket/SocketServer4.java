@@ -39,6 +39,7 @@ public class SocketServer4 {
                     ByteBuffer bb = ByteBuffer.allocate(3);
                     CharBuffer cb = CharBuffer.allocate(3);
 
+                    System.out.print("client [" + channel.getRemoteAddress() + "]: ");
                     for (int i = channel.read(bb); i != -1; i = channel.read(bb)) {
                         bb.flip();
                         utf8.decode(bb, cb, true);

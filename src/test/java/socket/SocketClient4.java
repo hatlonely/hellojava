@@ -27,6 +27,7 @@ public class SocketClient4 {
         channel.shutdownOutput();
 
         // read
+        System.out.print("server [" + channel.getRemoteAddress() + "]: ");
         for (int i = channel.read(bb); i != -1; i = channel.read(bb)) {
             bb.flip();
             while (bb.hasRemaining()) {
