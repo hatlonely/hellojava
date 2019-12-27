@@ -11,7 +11,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.Iterator;
-import java.util.Set;
 
 public class SocketServer4 {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -25,9 +24,7 @@ public class SocketServer4 {
 
         while (true) {
             selector.select();
-            Set<SelectionKey> keys = selector.selectedKeys();
-            Iterator<SelectionKey> it = keys.iterator();
-
+            Iterator<SelectionKey> it = selector.selectedKeys().iterator();
             while (it.hasNext()) {
                 SelectionKey key = it.next();
                 if (key.isAcceptable()) {
