@@ -25,8 +25,8 @@ public class StringTest {
         assertEquals("0123456789".substring(4), "456789");
         assertEquals("0123456789".substring(3, 6), "345");
         assertEquals("stay hungry, stay foolish".replace("stay", "keep"), "keep hungry, keep foolish");
-        assertArrayEquals("java golang swift".split(" "), new String[] { "java", "golang", "swift" });
-        assertEquals(String.join("|", new String[] { "java", "golang", "swift" }), "java|golang|swift");
+        assertArrayEquals("java golang swift".split(" "), new String[]{"java", "golang", "swift"});
+        assertEquals(String.join("|", new String[]{"java", "golang", "swift"}), "java|golang|swift");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class StringTest {
 
     @Test
     public void testStringJoiner() {
-        final StringJoiner sj = new StringJoiner(", ", "[", "]");
+        StringJoiner sj = new StringJoiner(", ", "[", "]");
         sj.add("one");
         sj.add("two");
         sj.add("three");
@@ -58,9 +58,32 @@ public class StringTest {
     }
 
     @Test
+    public void testStringBuilder() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("hello");
+        sb.append(" ");
+        sb.append("world");
+        sb.append(" ");
+        sb.append(123);
+        assertEquals(sb.toString(), "hello world 123");
+    }
+
+    @Test
+    public void testStringBuffer() {
+        // 和 StringBuilder 接口一样，但是是线程安全的
+        StringBuffer sb = new StringBuffer();
+        sb.append("hello");
+        sb.append(" ");
+        sb.append("world");
+        sb.append(" ");
+        sb.append(123);
+        assertEquals(sb.toString(), "hello world 123");
+    }
+
+    @Test
     public void testStringTokenizer() {
         // StringTokenizer是由于兼容性原因而保留的遗留类，不建议使用，使用 String.split 代替
-        final StringTokenizer tokens = new StringTokenizer("one, two, three", ", ");
+        StringTokenizer tokens = new StringTokenizer("one, two, three", ", ");
         while (tokens.hasMoreTokens()) {
             System.out.println(tokens.nextToken());
         }
