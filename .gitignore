@@ -10,3 +10,4 @@ gradlew.bat
 .settings/
 bin/
 *.iml
+*.class
