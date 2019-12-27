@@ -24,16 +24,10 @@ public class BlockingQueueTest {
             es.execute(() -> {
                 try {
                     for (int j = 0; j < 10; j++) {
-                        int k = ThreadLocalRandom.current().nextInt() % 100;
-                        System.out.println("put " + k);
-                        queue.put(k);
-                        Thread.sleep(500);
+                        queue.put(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
                     }
                     for (int j = 0; j < 10; j++) {
-                        int k = ThreadLocalRandom.current().nextInt() % 100;
-                        System.out.println("offer " + k);
-                        queue.offer(k, 1000, TimeUnit.MILLISECONDS);
-                        Thread.sleep(500);
+                        queue.offer(Math.abs(ThreadLocalRandom.current().nextInt() % 100), 1000, TimeUnit.MILLISECONDS);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -76,16 +70,10 @@ public class BlockingQueueTest {
             es.execute(() -> {
                 try {
                     for (int j = 0; j < 10; j++) {
-                        int k = ThreadLocalRandom.current().nextInt() % 100;
-                        System.out.println("put " + k);
-                        queue.transfer(k);
-                        Thread.sleep(500);
+                        queue.transfer(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
                     }
                     for (int j = 0; j < 10; j++) {
-                        int k = ThreadLocalRandom.current().nextInt() % 100;
-                        System.out.println("offer " + k);
-                        queue.tryTransfer(k, 1000, TimeUnit.MILLISECONDS);
-                        Thread.sleep(500);
+                        queue.tryTransfer(Math.abs(ThreadLocalRandom.current().nextInt() % 100), 1000, TimeUnit.MILLISECONDS);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
