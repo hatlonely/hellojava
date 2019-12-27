@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 public class BlockingDequeTest {
     @Test
     public void testBlockingDeque() {
-        BlockingDeque queue = new LinkedBlockingDeque();
+        BlockingDeque<Integer> queue = new LinkedBlockingDeque<>();
         ExecutorService es = Executors.newCachedThreadPool();
 
         // 生产者
