@@ -17,6 +17,7 @@ public class ExecutorServiceTest {
         ExecutorService es3 = Executors.newCachedThreadPool();
         // 工作窃取线程池，内部有固定数量（cpu 核数）的线程
         // 如果当前线程的任务完成，会窃取其他线程的任务
+        // 实际就是 ForkJoinPool
         ExecutorService es4 = Executors.newWorkStealingPool();
         // 支持延迟执行的线程池
         ScheduledExecutorService es5 = Executors.newSingleThreadScheduledExecutor();
