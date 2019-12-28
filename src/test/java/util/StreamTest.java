@@ -24,6 +24,10 @@ public class StreamTest {
         System.out.println(li.stream().map((x) -> x * x).collect(Collectors.toList()));
         System.out.println(li.stream().distinct().sorted((x, y) -> y - x).collect(Collectors.toList()));
         System.out.println(li.stream().skip(3).limit(4).collect(Collectors.toList()));
+        // 跳过元素直到一个不满足条件的元素 [5, 6, 7, 8, 9]
+        System.out.println(li.stream().dropWhile(x -> x < 5).collect(Collectors.toList()));
+        // 获取元素直到一个不满足条件的数据 [0, 1, 2, 3, 4]
+        System.out.println(li.stream().takeWhile(x -> x < 5).collect(Collectors.toList()));
         assertEquals(li.stream().reduce((x, y) -> x + y).orElse(0), Integer.valueOf(45));
         assertEquals(li.stream().min(Comparator.comparingInt(x -> x)).orElse(0), Integer.valueOf(0));
         assertEquals(li.stream().max(Comparator.comparingInt(x -> x)).orElse(0), Integer.valueOf(9));
