@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -22,14 +22,14 @@ public class DateTimeTest {
 
     @Test
     public void testDateFormat() throws Exception {
-        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final Date d = df.parse("2019-12-20 19:09:59");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d = df.parse("2019-12-20 19:09:59");
         assertEquals(df.format(d), "2019-12-20 19:09:59");
     }
 
     @Test
     public void testDate() throws Exception {
-        for (final Date d : Arrays.asList(
+        for (Date d : Arrays.asList(
                 new Date(),
                 new Date(1576840199L * 1000),
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2019-12-20 19:09:59"),
@@ -46,7 +46,7 @@ public class DateTimeTest {
 
     @Test
     public void testInstant() {
-        for (final Instant i : Arrays.asList(
+        for (Instant i : Arrays.asList(
                 Instant.parse("2019-12-20T19:09:59Z"),
                 Instant.now(),
                 new Date().toInstant()
@@ -60,7 +60,7 @@ public class DateTimeTest {
 
     @Test
     public void testCalendar() {
-        final Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
         c.set(2019, Calendar.DECEMBER, 20, 19, 9, 59);
         System.out.println(c);
         c.add(Calendar.DATE, 2);

@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 public class StackTest {
     @Test
     public void testStack() {
-        final Stack<Integer> s = new Stack<>();
+        Stack<Integer> s = new Stack<>();
 
         for (int i = 0; i < 10; i++) {
             s.push(i);

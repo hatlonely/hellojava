@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class MapTest {
     @Test
     public void testMap() {
-        for (final Map<String, String> m : Arrays.asList(
+        for (Map<String, String> m : Arrays.asList(
                 new TreeMap<String, String>(),
                 new HashMap<String, String>(),
                 new LinkedHashMap<String, String>(),
@@ -41,17 +41,17 @@ public class MapTest {
                     "key4", "val4"
             ));
             System.out.println(m);
-            final Set keys = m.keySet();
+            Set keys = m.keySet();
             for (int i = 0; i < 5; i++) {
                 assertTrue(keys.contains("key" + i));
             }
-            final Collection vals = m.values();
+            Collection vals = m.values();
             for (int i = 0; i < 5; i++) {
                 assertTrue(vals.contains("val" + i));
             }
 
-            final Set<Map.Entry<String, String>> entries = m.entrySet();
-            for (final Map.Entry it : entries) {
+            Set<Map.Entry<String, String>> entries = m.entrySet();
+            for (Map.Entry it : entries) {
                 System.out.println(it.getKey() + "=>" + it.getValue());
             }
             m.forEach((k, v) -> System.out.println(k + " => " + v));
@@ -78,7 +78,7 @@ public class MapTest {
     @Test
     public void testIdentityHashMapMap() {
         // 判断同一个 key 的条件是 key == e.key，必须是同一个对象才认为相等
-        final IdentityHashMap<String, String> m = new IdentityHashMap<>();
+        IdentityHashMap<String, String> m = new IdentityHashMap<>();
         for (int i = 0; i < 5; i++) {
             m.put("key" + i, "val" + i);
         }
@@ -88,7 +88,7 @@ public class MapTest {
         System.out.println(m);
         System.out.println(m.get("key0"));
 
-        final String key = "key0";
+        String key = "key0";
         m.put(key, "val000");
         assertEquals(m.get(key), "val000");
     }

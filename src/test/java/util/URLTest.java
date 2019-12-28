@@ -1,12 +1,12 @@
-package javase;
+package util;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class URLTest {
     @Test

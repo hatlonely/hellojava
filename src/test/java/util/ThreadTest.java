@@ -1,25 +1,17 @@
-package javase;
-
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+package util;
 
 import org.junit.Test;
+
+import java.util.Random;
+import java.util.concurrent.*;
 
 public class ThreadTest {
     @Test
     public void testThread() {
         class MyThread extends Thread {
-            private String name;
+            private final String name;
 
-            public MyThread(String name) {
+            private MyThread(String name) {
                 this.name = name;
             }
 
@@ -54,9 +46,9 @@ public class ThreadTest {
     @Test
     public void testRunnable() {
         class MyRunnable implements Runnable {
-            private String name;
+            private final String name;
 
-            public MyRunnable(String name) {
+            private MyRunnable(String name) {
                 this.name = name;
             }
 
@@ -91,16 +83,16 @@ public class ThreadTest {
     @Test
     public void testCallable() {
         class MyCallable implements Callable<Integer> {
-            private Random random;
+            private final Random random;
 
-            public MyCallable() {
-                this.random = new Random();
+            private MyCallable() {
+                random = new Random();
             }
 
             @Override
             public Integer call() throws Exception {
                 Thread.sleep(100L);
-                return this.random.nextInt();
+                return random.nextInt();
             }
         }
 
@@ -129,16 +121,16 @@ public class ThreadTest {
     @Test
     public void testThreadPool() {
         class MyCallable implements Callable<Integer> {
-            private Random random;
+            private final Random random;
 
-            public MyCallable() {
-                this.random = new Random();
+            private MyCallable() {
+                random = new Random();
             }
 
             @Override
             public Integer call() throws Exception {
                 Thread.sleep(100L);
-                return this.random.nextInt();
+                return random.nextInt();
             }
         }
 

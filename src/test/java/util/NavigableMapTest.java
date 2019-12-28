@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class NavigableMapTest {
     @Test
     public void testNavigableMap() {
-        for (final NavigableMap<String, String> m : Arrays.asList(
+        for (NavigableMap<String, String> m : Arrays.asList(
                 new TreeMap<String, String>()
         )) {
             for (int i = 0; i < 10; i++) {
@@ -39,16 +39,16 @@ public class NavigableMapTest {
             assertEquals(m.pollFirstEntry().getKey(), "key0");
             assertEquals(m.pollLastEntry().getKey(), "key9");
 
-            final NavigableMap dm = m.descendingMap();
+            NavigableMap dm = m.descendingMap();
             assertArrayEquals(dm.keySet().toArray(), new String[]{
                     "key8", "key7", "key6", "key5", "key4", "key3", "key2", "key1"
             });
 
-            final NavigableMap hm1 = m.headMap("key3", true);
-            final NavigableMap hm2 = m.headMap("key3", false);
-            final NavigableMap tm1 = m.tailMap("key7", true);
-            final NavigableMap tm2 = m.tailMap("key7", false);
-            final NavigableMap sm = m.subMap("key3", true, "key7", false);
+            NavigableMap hm1 = m.headMap("key3", true);
+            NavigableMap hm2 = m.headMap("key3", false);
+            NavigableMap tm1 = m.tailMap("key7", true);
+            NavigableMap tm2 = m.tailMap("key7", false);
+            NavigableMap sm = m.subMap("key3", true, "key7", false);
             assertArrayEquals(hm1.keySet().toArray(), new String[]{"key1", "key2", "key3"});
             assertArrayEquals(hm2.keySet().toArray(), new String[]{"key1", "key2"});
             assertArrayEquals(tm1.keySet().toArray(), new String[]{"key7", "key8"});

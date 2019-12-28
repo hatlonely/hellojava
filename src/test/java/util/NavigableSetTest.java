@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class NavigableSetTest {
     @Test
     public void testNavigableSet() {
-        for (final NavigableSet<String> s : Arrays.asList(
+        for (NavigableSet<String> s : Arrays.asList(
                 new TreeSet<String>()
         )) {
             for (int i = 0; i < 10; i++) {
@@ -33,16 +33,16 @@ public class NavigableSetTest {
             assertEquals(s.pollFirst(), "test0");
             assertEquals(s.pollLast(), "test9");
 
-            final NavigableSet ds = s.descendingSet();
+            NavigableSet ds = s.descendingSet();
             assertArrayEquals(ds.toArray(), new String[]{
                     "test8", "test7", "test6", "test5", "test4", "test3", "test2", "test1"
             });
 
-            final NavigableSet hs1 = s.headSet("test3", true);
-            final NavigableSet hs2 = s.headSet("test3", false);
-            final NavigableSet ts1 = s.tailSet("test7", true);
-            final NavigableSet ts2 = s.tailSet("test7", false);
-            final NavigableSet ss = s.subSet("test3", true, "test7", false);
+            NavigableSet hs1 = s.headSet("test3", true);
+            NavigableSet hs2 = s.headSet("test3", false);
+            NavigableSet ts1 = s.tailSet("test7", true);
+            NavigableSet ts2 = s.tailSet("test7", false);
+            NavigableSet ss = s.subSet("test3", true, "test7", false);
             assertArrayEquals(hs1.toArray(), new String[]{"test1", "test2", "test3"});
             assertArrayEquals(hs2.toArray(), new String[]{"test1", "test2"});
             assertArrayEquals(ts1.toArray(), new String[]{"test7", "test8"});

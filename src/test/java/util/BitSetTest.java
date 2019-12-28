@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 public class BitSetTest {
     @Test
     public void testBitSet() {
-        final BitSet bs = new BitSet();
+        BitSet bs = new BitSet();
 
         bs.set(1);
         bs.set(12);
@@ -40,14 +40,14 @@ public class BitSetTest {
 
         System.out.println(bs);
 
-        final BitSet nb = bs.get(10, 20);   // bit set 0-9
+        BitSet nb = bs.get(10, 20);   // bit set 0-9
         System.out.println(nb);
     }
 
     @Test
     public void testBitOp() {
-        final BitSet bs1 = new BitSet();
-        final BitSet bs2 = new BitSet();
+        BitSet bs1 = new BitSet();
+        BitSet bs2 = new BitSet();
         bs1.set(1);
         bs1.set(2);
         bs1.set(4);

@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class QueueTest {
     @Test
     public void testQueue() {
-        for (final Queue<Integer> q : Arrays.asList(
+        for (Queue<Integer> q : Arrays.asList(
                 new LinkedList<Integer>(),
                 new ArrayDeque<Integer>(),
                 new ConcurrentLinkedDeque<Integer>(),
@@ -53,7 +53,7 @@ public class QueueTest {
     @Test
     public void testPriorityQueue() {
         {
-            final PriorityQueue<Integer> pq = new PriorityQueue<>();
+            PriorityQueue<Integer> pq = new PriorityQueue<>();
             for (int i = 0; i < 5; i++) {
                 pq.add(9 - i);
             }
@@ -66,7 +66,7 @@ public class QueueTest {
             }
         }
         {
-            final PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> (b - a));
+            PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> (b - a));
             for (int i = 0; i < 5; i++) {
                 pq.add(9 - i);
             }
@@ -82,7 +82,7 @@ public class QueueTest {
 
     @Test
     public void testBlockingQueue() {
-        final Queue<Integer> q = new ArrayBlockingQueue<>(10);
+        Queue<Integer> q = new ArrayBlockingQueue<>(10);
         // empty
         assertThrows(NoSuchElementException.class, () -> q.remove());
         assertEquals(q.poll(), null);

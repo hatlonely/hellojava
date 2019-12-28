@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DequeTest {
     @Test
     public void testDeque() {
-        for (final Deque<Integer> q : Arrays.asList(
+        for (Deque<Integer> q : Arrays.asList(
                 new LinkedList<Integer>(),
                 new ArrayDeque<Integer>(),
                 new ConcurrentLinkedDeque<Integer>(),

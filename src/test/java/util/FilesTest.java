@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.After;
 import org.junit.Before;

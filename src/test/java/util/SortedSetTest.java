@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class SortedSetTest {
     @Test
     public void testSortedSet() {
-        for (final SortedSet<String> s : Arrays.asList(
+        for (SortedSet<String> s : Arrays.asList(
                 new TreeSet<String>()
         )) {
             for (int i = 0; i < 10; i++) {
@@ -22,9 +22,9 @@ public class SortedSetTest {
             assertEquals(s.first(), "test0");
             assertEquals(s.last(), "test9");
 
-            final SortedSet hs = s.headSet("test3");
-            final SortedSet ts = s.tailSet("test7");
-            final SortedSet ss = s.subSet("test3", "test7");
+            SortedSet hs = s.headSet("test3");
+            SortedSet ts = s.tailSet("test7");
+            SortedSet ss = s.subSet("test3", "test7");
             System.out.println(hs);
             System.out.println(ts);
             System.out.println(ss);

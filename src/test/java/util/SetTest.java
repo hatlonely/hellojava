@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class SetTest {
     @Test
     public void testSet() {
         // Set 没有特有的方法，所有的方法继承自 Collection
-        for (final Set<String> s : Arrays.asList(
+        for (Set<String> s : Arrays.asList(
                 new HashSet<String>(),
                 new TreeSet<String>(),
                 new LinkedHashSet<String>()

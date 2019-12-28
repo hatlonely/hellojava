@@ -1,4 +1,4 @@
-package javase;
+package util;
 
 import org.junit.Test;
 
@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class CollectionTest {
     @Test
     public void testCollection() {
-        for (final Collection<Integer> c : Arrays.asList(
+        for (Collection<Integer> c : Arrays.asList(
                 new ArrayList<Integer>(),
                 new LinkedList<Integer>(),
                 new Vector<Integer>(),
@@ -22,10 +22,10 @@ public class CollectionTest {
             }
 
             // 遍历
-            for (final Iterator it = c.iterator(); it.hasNext(); ) {
+            for (Iterator it = c.iterator(); it.hasNext(); ) {
                 System.out.println(it.next());
             }
-            for (final Integer i : c) {
+            for (Integer i : c) {
                 System.out.println(i);
             }
 
