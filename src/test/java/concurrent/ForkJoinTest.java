@@ -33,9 +33,9 @@ public class ForkJoinTest {
                 } else {
                     int middle = (end + start) / 2;
                     PowerList l = new PowerList(list, start, middle);
+                    l.fork();       // 左边的任务在新的线程中完成
                     PowerList r = new PowerList(list, middle, end);
-                    l.compute();    // 左边的任务在当前线程中完成
-                    r.fork();       // 右边的任务在新的线程中完成
+                    r.compute();    // 右边的任务在当前线程中完成
                 }
             }
         }
