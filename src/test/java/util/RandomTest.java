@@ -16,7 +16,7 @@ public class RandomTest {
 
     @Test
     public void testRandom() {
-        // java.util.Random的java.util.Random是线程安全的。
+        // java.util.Random是线程安全的。
         // 但是，跨线程的同时使用java.util.Random实例可能会遇到争用，从而导致性能下降。
         // 在多线程设计中考虑使用ThreadLocalRandom
         Random r = new Random();
