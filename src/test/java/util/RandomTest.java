@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 public class RandomTest {
     @Test
     public void testThreadLocalRandom() {
-        System.out.println(ThreadLocalRandom.current().nextInt());
-        System.out.println(ThreadLocalRandom.current().nextLong());
-        System.out.println(ThreadLocalRandom.current().nextFloat());
-        System.out.println(ThreadLocalRandom.current().nextDouble());
+        ThreadLocalRandom r = ThreadLocalRandom.current();
+        System.out.println(r.nextInt());
+        System.out.println(r.nextLong());
+        System.out.println(r.nextFloat());
+        System.out.println(r.nextDouble());
     }
 
     @Test

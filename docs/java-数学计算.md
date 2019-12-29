@@ -141,10 +141,35 @@ System.out.println(Math.nextAfter(1.1, Double.NEGATIVE_INFINITY));    // 上一�
 
 ## 随机数
 
+### math 库随机数
+
 ``` java
 System.out.println(Math.random());          // 0 ~ 1 之间的随机数
 ```
 
+### java.lang.Random
+
+`Random` 类提供了更丰富的随机方法，可以返回各种不同类型的随机数
+
+``` java
+Random r = new Random();
+System.out.println(r.nextInt());
+System.out.println(r.nextLong());
+System.out.println(r.nextFloat());
+System.out.println(r.nextDouble());
+```
+
+`Random` 还提供了流式 api
+
+``` java
+Random r = new Random();
+List<Integer> li = r.ints().limit(10).boxed().map((x) -> Math.abs(x % 100)).collect(Collectors.toList());
+System.out.println(li);
+```
+
+`java.util.Random` 是线程安全的，但是，跨线程的同时使用 `java.util.Random` 实例可能会遇到争用，从而导致性能下降。在多线程设计中考虑使用`java.util.concurrent.ThreadLocalRandom` 代替 `java.util.Random`，ThreadLocalRandom 和 Random 拥有一致的接口
+
 ## 链接
 
-- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MathTest.java>
+- Math 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MathTest.java>
+- 随机数测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/RandomTest.java>
