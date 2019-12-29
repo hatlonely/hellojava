@@ -2,8 +2,10 @@ package util;
 
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class RandomTest {
     @Test
@@ -24,6 +26,13 @@ public class RandomTest {
         System.out.println(r.nextLong());
         System.out.println(r.nextFloat());
         System.out.println(r.nextDouble());
+    }
+
+    @Test
+    public void testStream() {
+        Random r = new Random();
+        List<Integer> li = r.ints().limit(10).boxed().map((x) -> Math.abs(x % 100)).collect(Collectors.toList());
+        System.out.println(li);
     }
 
     @Test
