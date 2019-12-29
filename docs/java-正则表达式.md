@@ -179,3 +179,7 @@ assertEquals("hatlonely@foxmail.com".replaceAll(
         "^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$", "$0 $1 $2 $3"
 ), "hatlonely@foxmail.com hatlonely foxmail com");
 ```
+
+## 链接
+
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/RegexTest.java>
