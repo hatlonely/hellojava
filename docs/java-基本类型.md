@@ -1,5 +1,7 @@
 # java 基本类型
 
+## 基本类型
+
 java 基本的基本类型包括 boolean, byte, char, short, int, long, float, double
 
 每个类型都有一个封装类，封装类继承自 `Object` 对象，可以用作存放在容器中，另外还提供了一些辅助函数
@@ -43,6 +45,48 @@ assertEquals(Double.parseDouble("123.456"), 123.456, 0.00001);
 assertEquals(Double.valueOf(123.456).toString(), "123.456");
 ```
 
+## 数组
+
+数组是固定长度的，可以通过下标直接访问元素
+
+``` java
+int[] ia = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+assertEquals(ia[3], 3);
+assertEquals(ia.length, 10);
+```
+
+`Arrays.fill` 可以用来填充数组
+
+``` java
+int[] ia = new int[5];
+Arrays.fill(ia, 6);
+assertArrayEquals(ia, new int[]{6, 6, 6, 6, 6});
+```
+
+`Arrays.sort` 可以对数组进行排序
+
+``` java
+int[] ia = {5, 8, 1, 2, 0, 1};
+Arrays.sort(ia);
+assertArrayEquals(ia, new int[]{0, 1, 1, 2, 5, 8});
+```
+
+`Arrays.binarySearch` 可以进行二分查找
+
+``` java
+int[] ia = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+assertEquals(Arrays.binarySearch(ia, 5), 5);
+```
+
+`Arrays.copyOfRange` 生成子数组
+
+```
+int[] ia = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+assertArrayEquals(Arrays.copyOf(ia, 5), new int[]{0, 1, 2, 3, 4});
+assertArrayEquals(Arrays.copyOfRange(ia, 3, 8), new int[]{3, 4, 5, 6, 7});
+```
+
 ## 链接
 
-- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/NumberTest.java>
+- 基本类型测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/NumberTest.java>
+- 数组测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ArrayTest.java>
