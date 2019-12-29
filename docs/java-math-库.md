@@ -147,4 +147,4 @@ System.out.println(Math.random());          // 0 ~ 1 之间的随机数
 
 ## 链接
 
-- 代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MathTest.java>
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MathTest.java>
