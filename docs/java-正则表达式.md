@@ -164,3 +164,18 @@ assertFalse(Pattern.matches("(\\w+) \\1", "abc def"));
 ```
 
 `(\w+)\1` 表示两个重复的单词
+
+## 正则替换
+
+`String` 和 `Pattern` 都提供了 `replaceAll` 和 `replaceFirst` 方法来作正则替换，替换串中可以 `$i` 来获取正则匹配捕获的分组
+
+``` java
+Pattern pattern = Pattern.compile("^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$");
+assertEquals(pattern.matcher("hatlonely@foxmail.com").replaceAll(
+        "$0 $1 $2 $3"
+), "hatlonely@foxmail.com hatlonely foxmail com");
+
+assertEquals("hatlonely@foxmail.com".replaceAll(
+        "^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$", "$0 $1 $2 $3"
+), "hatlonely@foxmail.com hatlonely foxmail com");
+```

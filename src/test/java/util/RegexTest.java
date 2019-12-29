@@ -86,4 +86,16 @@ public class RegexTest {
         assertTrue(Pattern.matches("(\\w+) \\1", "abc abc"));
         assertFalse(Pattern.matches("(\\w+) \\1", "abc def"));
     }
+
+    @Test
+    public void testReplace() {
+        Pattern pattern = Pattern.compile("^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$");
+        assertEquals(pattern.matcher("hatlonely@foxmail.com").replaceAll(
+                "$0 $1 $2 $3"
+        ), "hatlonely@foxmail.com hatlonely foxmail com");
+
+        assertEquals("hatlonely@foxmail.com".replaceAll(
+                "^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$", "$0 $1 $2 $3"
+        ), "hatlonely@foxmail.com hatlonely foxmail com");
+    }
 }
