@@ -13,13 +13,13 @@ final double RADIANS_TO_DEGREES = 57.29577951308232;    // 弧度转角度
 
 ## 取整
 
-1. `abs(x)`: 绝对值
-2. `floor(x)`: 向下取整
-3. `ceil(x)`: 向上取整
-4. `round(x)`: 四舍五入，如果有两个(`x.5`)，返回较大的那个数
-5. `rint(x)`: 最接近的整数，如果有两个(`x.5`)，返回偶数
-6. `floorDiv(x, y)`: 向下取整除法
-7. `floorMod(x, y)`: java 默认的取摸 `%` 得到的结果和 `x` 的符号相同，`floorMod` 和 `y` 的符号相同
+- `abs(x)`: 绝对值
+- `floor(x)`: 向下取整
+- `ceil(x)`: 向上取整
+- `round(x)`: 四舍五入，如果有两个(`x.5`)，返回较大的那个数
+- `rint(x)`: 最接近的整数，如果有两个(`x.5`)，返回偶数
+- `floorDiv(x, y)`: 向下取整除法
+- `floorMod(x, y)`: java 默认的取摸 `%` 得到的结果和 `x` 的符号相同，`floorMod` 和 `y` 的符号相同
 
 ``` java
 double delta = 0.0000001;
@@ -63,15 +63,15 @@ assertEquals(Math.atan(1), Math.PI / 4, delta);
 
 ## 指数对数
 
-1. `pow(x, y)`: `x^y`，`x` 的 `y` 次方
-2. `sqrt(x)`: `√x`，`x` 的平方根
-3. `cbrt(x)`: 三次方根
-4. `hypot(x, y)`: `√(x² + y²)`
-4. `exp(x)`: `e ^ x`
-5. `expm1(x)`: `e ^ x - 1`
-6. `log(x)`: `ln(x)`
-7. `log10`: `lg(x)`
-8. `log1p(x)`: `ln(1+x)`
+- `pow(x, y)`: `x^y`，`x` 的 `y` 次方
+- `sqrt(x)`: `√x`，`x` 的平方根
+- `cbrt(x)`: 三次方根
+- `hypot(x, y)`: `√(x² + y²)`
+- `exp(x)`: `e ^ x`
+- `expm1(x)`: `e ^ x - 1`
+- `log(x)`: `ln(x)`
+- `log10`: `lg(x)`
+- `log1p(x)`: `ln(1+x)`
 
 ``` java
 assertEquals(Math.pow(3, 2), 9, delta);
@@ -89,9 +89,9 @@ assertEquals(Math.log1p(Math.E - 1), 1, delta);     // ln(1 + x)
 
 ## 双曲函数
 
-1. `sinh(x)`: `(e ^ x - e ^ -x) / 2`
-2. `cosh(x)`: `(e ^ x + e ^ -x) / 2`
-3. `tanh(x)`: `sinh(x) / cosh(x)`
+- `sinh(x)`: `(e ^ x - e ^ -x) / 2`
+- `cosh(x)`: `(e ^ x + e ^ -x) / 2`
+- `tanh(x)`: `sinh(x) / cosh(x)`
 
 ``` java
 assertEquals(Math.sinh(2), (Math.exp(2) - Math.exp(-2)) / 2, delta);    // sinh(x) = (e ^ x - e ^ -x) / 2
@@ -103,13 +103,13 @@ assertEquals(Math.tanh(2), Math.sinh(2) / Math.cosh(2), delta);         // tanh(
 
 普通的数值计算在溢出时是没有感知的，比如 `Long.MAX_VALUE + 1` 将得到结果 `Long.MIN_VALUE`，为了解决这种不合理，`Math` 提供了一些辅助函数，在结果溢出时将抛出异常
 
-1. `addExact(x, y)`: 加法 
-2. `multiplyExact(x, y)`: 乘法 
-3. `decrementExact(x, y)`: 递减 
-4. `incrementExact(x, y)`: 递增 
-5. `negateExact(x, y)`: 相反数
-6. `multiplyFull(x, y)`: 接受两个 `int` 返回一个 `long`，防止溢出
-7. `multiplyHigh(x, y)`: 返回两个 `long` 乘积的高 `64` 位
+- `addExact(x, y)`: 加法 
+- `multiplyExact(x, y)`: 乘法 
+- `decrementExact(x, y)`: 递减 
+- `incrementExact(x, y)`: 递增 
+- `negateExact(x, y)`: 相反数
+- `multiplyFull(x, y)`: 接受两个 `int` 返回一个 `long`，防止溢出
+- `multiplyHigh(x, y)`: 返回两个 `long` 乘积的高 `64` 位
 
 ``` java
 assertEquals(Long.MAX_VALUE + 1, Long.MIN_VALUE);                                       // 溢出
