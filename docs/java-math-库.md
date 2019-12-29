@@ -144,3 +144,7 @@ System.out.println(Math.nextAfter(1.1, Double.NEGATIVE_INFINITY));    // 上一�
 ``` java
 System.out.println(Math.random());          // 0 ~ 1 之间的随机数
 ```
+
+## 链接
+
+- 代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MathTest.java>
