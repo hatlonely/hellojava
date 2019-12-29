@@ -44,7 +44,7 @@ assertEquals(Math.rint(6.5), 6, delta);
 assertEquals(Math.floorDiv(7, 3), 2);
 assertEquals(Math.floorDiv(-7, 3), -3);
 assertEquals(Math.floorMod(7, 3), 1);
- assertEquals(Math.floorMod(-7, -3), -1);
+assertEquals(Math.floorMod(-7, -3), -1);
 assertEquals(Math.floorMod(-7, 3), 2);
 assertEquals(-7 % -3, -1);
 assertEquals(-7 % 3, -1);
