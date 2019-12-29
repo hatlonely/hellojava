@@ -1,14 +1,5 @@
 package jackson;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -16,16 +7,26 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 class Person {
-    String name;
+    private String name;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private
     Date birthday;
 
     @JsonProperty("mails")
+    private
     List<String> emails;
 
     @Override
@@ -33,28 +34,28 @@ class Person {
         return "name:" + name + ", birthday: " + birthday + ", emails: " + emails;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setEmails(List<String> emails) {
-        this.emails = emails;
-    }
-
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public Date getBirthday() {
+    void setName(String name) {
+        this.name = name;
+    }
+
+    Date getBirthday() {
         return birthday;
     }
 
-    public List<String> getEmails() {
+    void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    List<String> getEmails() {
         return emails;
+    }
+
+    void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 }
 
