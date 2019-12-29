@@ -70,6 +70,10 @@ public class MathTest {
         assertEquals(Math.floorDiv(7, 3), 2);
         assertEquals(Math.floorDiv(-7, 3), -3);
         assertEquals(Math.floorMod(7, 3), 1);
+        assertEquals(Math.floorMod(-7, -3), -1);
+        assertEquals(Math.floorMod(-7, 3), 2);
+        assertEquals(-7 % -3, -1);
+        assertEquals(-7 % 3, -1);
 
         System.out.println(Math.nextUp(1.1));   // 下一个浮点数
         System.out.println(Math.nextDown(1.1)); // 上一个浮点数
