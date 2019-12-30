@@ -66,16 +66,34 @@ public class StreamTest {
 
     @Test
     public void testTerminal() {
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).map(x -> x * x).collect(Collectors.toList()), equalTo(List.of(1, 4, 9, 16, 25, 36, 49, 64, 81)));
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).filter(x -> x % 2 == 0).collect(Collectors.toList()), equalTo(List.of(2, 4, 6, 8)));
-        assertThat(Stream.of(4, 1, 2, 1, 2, 4, 3, 3).distinct().collect(Collectors.toList()), equalTo(List.of(4, 1, 2, 3)));
-        assertThat(Stream.of(6, 4, 7, 3, 2, 9, 1, 5, 8).sorted().collect(Collectors.toList()), equalTo(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9)));
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).limit(3).collect(Collectors.toList()), equalTo(List.of(1, 2, 3)));
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).skip(6).collect(Collectors.toList()), equalTo(List.of(7, 8, 9)));
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).peek(System.out::println).collect(Collectors.toList()), equalTo(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9)));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).map(x -> x * x).collect(Collectors.toList()), equalTo(List.of(
+                1, 4, 9, 16, 25, 36, 49, 64, 81
+        )));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).filter(x -> x % 2 == 0).collect(Collectors.toList()), equalTo(List.of(
+                2, 4, 6, 8
+        )));
+        assertThat(Stream.of(4, 1, 2, 1, 2, 4, 3, 3).distinct().collect(Collectors.toList()), equalTo(List.of(
+                4, 1, 2, 3
+        )));
+        assertThat(Stream.of(6, 4, 7, 3, 2, 9, 1, 5, 8).sorted().collect(Collectors.toList()), equalTo(List.of(
+                1, 2, 3, 4, 5, 6, 7, 8, 9
+        )));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).limit(3).collect(Collectors.toList()), equalTo(List.of(
+                1, 2, 3
+        )));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).skip(6).collect(Collectors.toList()), equalTo(List.of(
+                7, 8, 9
+        )));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).peek(System.out::println).collect(Collectors.toList()), equalTo(List.of(
+                1, 2, 3, 4, 5, 6, 7, 8, 9
+        )));
         assertEquals(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).mapToInt(x -> x * x).sum(), 285);
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).takeWhile(x -> x < 5).collect(Collectors.toList()), equalTo(List.of(1, 2, 3, 4)));
-        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).dropWhile(x -> x < 5).collect(Collectors.toList()), equalTo(List.of(5, 6, 7, 8, 9)));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).takeWhile(x -> x < 5).collect(Collectors.toList()), equalTo(List.of(
+                1, 2, 3, 4
+        )));
+        assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).dropWhile(x -> x < 5).collect(Collectors.toList()), equalTo(List.of(
+                5, 6, 7, 8, 9
+        )));
 
         System.out.println(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).sequential().collect(Collectors.toList()));
         System.out.println(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).parallel().collect(Collectors.toList()));
