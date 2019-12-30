@@ -2,3 +2,4 @@
 - [字符串](java-字符串.md)
 - [数学计算](java-数学计算.md)
 - [正则表达式](java-正则表达式.md)
+- [stream](java-stream.md)
