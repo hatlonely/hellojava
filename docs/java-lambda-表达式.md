@@ -46,3 +46,7 @@ Consumer<Integer> print = System.out::println;
 Predicate<String> empty = String::isEmpty;
 Supplier<Date> date = Date::new;
 ```
+
+## 链接
+
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/LambdaTest.java>
