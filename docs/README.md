@@ -1,5 +1,6 @@
 - [基本类型](java-基本类型.md)
 - [字符串](java-字符串.md)
 - [数学计算](java-数学计算.md)
+- [lambda-表达式](java-lambda-表达式.md)
 - [正则表达式](java-正则表达式.md)
 - [stream](java-stream.md)
