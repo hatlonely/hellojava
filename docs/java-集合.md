@@ -115,7 +115,60 @@ List 接口为顺序表，关注集合的定位，查找，修改和排序，底
 
 `SortedSet` 继承自 `Set`，提供了如下接口:
 
+- `first`: 最小的元素
+- `last`: 最大的元素
+- `headSet`: 头部集合
+- `tailSet`: 尾部集合
+- `subSet`: 子集
+
+``` java
+SortedSet<String> set = IntStream.range(0, 10).boxed().map(x -> "key" + x).collect(Collectors.toCollection(TreeSet::new));
+assertEquals(set.first(), "key0");
+assertEquals(set.last(), "key9");
+assertThat(set.headSet("key3"), equalTo(Set.of("key0", "key1", "key2")));
+assertThat(set.tailSet("key7"), equalTo(Set.of("key7", "key8", "key9")));
+assertThat(set.subSet("key3", "key7"), equalTo(Set.of("key3", "key4", "key5", "key6")));
+```
+
 `NavigableSet` 继承自 `SortedSet`，提供了如下接口:
+
+- `lower`: 小于给定值的最大值
+- `higher`: 大于给定值的最小值
+- `floor`: 小于等于给定值中的最大值
+- `ceiling`: 大于等于给定值的最小值
+- `pollFirst`: 删除并获取最小值
+- `pollLast`: 删除并获取最大值
+- `descendingSet`: 获取倒排的集合
+- `headSet`: 头部集合，提供额外参数是否包含给定值
+- `tailSet`: 尾部集合，提供额外参数是否包含给定值
+- `subSet`: 子集，提供额外参数是否包含给定值
+
+``` java
+{
+    NavigableSet<String> set = IntStream.range(0, 10).boxed().map(x -> "key" + x).collect(Collectors.toCollection(TreeSet::new));
+    assertEquals(set.lower("key6"), "key5");    // <
+    assertEquals(set.higher("key6"), "key7");   // >
+    assertEquals(set.floor("key6"), "key6");    // <=
+    assertEquals(set.ceiling("key6"), "key6");  // >=
+    set.remove("key6");
+    assertEquals(set.floor("key6"), "key5");
+    assertEquals(set.ceiling("key6"), "key7");
+}
+{
+    NavigableSet<String> set = IntStream.range(0, 5).boxed().map(x -> "key" + x).collect(Collectors.toCollection(TreeSet::new));
+    assertEquals(set.pollFirst(), "key0");
+    assertThat(set, equalTo(Set.of("key1", "key2", "key3", "key4")));
+    assertEquals(set.pollLast(), "key4");
+    assertThat(set, equalTo(Set.of("key1", "key2", "key3")));
+}
+{
+    NavigableSet<String> set = IntStream.range(0, 10).boxed().map(x -> "key" + x).collect(Collectors.toCollection(TreeSet::new));
+    assertThat(set.descendingSet(), equalTo(Set.of("key9", "key8", "key7", "key6", "key5", "key4", "key3", "key2", "key1", "key0")));
+    assertThat(set.headSet("key3", false), equalTo(Set.of("key0", "key1", "key2")));
+    assertThat(set.tailSet("key7", true), equalTo(Set.of("key7", "key8", "key9")));
+    assertThat(set.subSet("key3", true, "key7", false), equalTo(Set.of("key3", "key4", "key5", "key6")));
+}
+```
 
 ## Stack
 
