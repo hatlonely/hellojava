@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class CollectionTest {
     @Test
-    public void testNewCollection() {
+    public void testCollection() {
         {
             Collection<Integer> c = new ArrayList<>(List.of(1, 2, 3, 4, 5));
             assertEquals(c.size(), 5);

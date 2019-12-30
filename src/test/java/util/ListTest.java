@@ -2,56 +2,38 @@ package util;
 
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ListTest {
     @Test
     public void testList() {
-        for (List<Integer> l : Arrays.asList(
-                new LinkedList<Integer>(),
-                new ArrayList<Integer>(),
-                new Vector<Integer>()
-        )) {
-            for (int i = 0; i < 10; i++) {
-                l.add(i);
-            }
-            assertArrayEquals(l.toArray(), new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-
-            for (ListIterator it = l.listIterator(); it.hasNext(); ) {
-                System.out.println(it.next());
-            }
-
-            for (int i = 0; i < 10; i++) {
-                assertEquals(l.get(i), Integer.valueOf(i));
-            }
-            for (int i = 0; i < 10; i++) {
-                l.set(i, 10 - i - 1);
-            }
-            assertArrayEquals(l.toArray(), new Integer[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
-
-            l.add(2, 10);
-            assertArrayEquals(l.toArray(), new Integer[]{9, 8, 10, 7, 6, 5, 4, 3, 2, 1, 0});
-
-            l.remove(2);
-            assertArrayEquals(l.toArray(), new Integer[]{9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
-
-            l.remove(Integer.valueOf(2));
-            assertArrayEquals(l.toArray(), new Integer[]{9, 8, 7, 6, 5, 4, 3, 1, 0});
-
-            l.add(2);
+        {
+            List<Integer> l = new ArrayList<>(List.of(1, 2, 3, 4, 5, 4, 3, 2, 1));
+            assertEquals(l.get(2), Integer.valueOf(3));
+            assertEquals(l.indexOf(3), 2);
+            assertEquals(l.indexOf(6), -1);
+            assertEquals(l.lastIndexOf(3), 6);
+            assertEquals(l.subList(2, 6), List.of(3, 4, 5, 4));
+        }
+        {
+            List<Integer> l = new ArrayList<>(List.of(1, 2, 3, 4, 5, 4, 3, 2, 1));
+            l.set(5, 6);
+            assertThat(l, equalTo(List.of(1, 2, 3, 4, 5, 6, 3, 2, 1)));
+        }
+        {
+            List<Integer> l = new ArrayList<>(List.of(1, 2, 3, 4, 5, 4, 3, 2, 1));
             l.sort(Integer::compareTo);
-            assertArrayEquals(l.toArray(), new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-
-            l.add(8, 2);
-            assertArrayEquals(l.toArray(), new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 2, 8, 9});
-            assertEquals(l.indexOf(2), 2);
-            assertEquals(l.lastIndexOf(2), 8);
-
-            List<Integer> sub = l.subList(3, 8);
-            assertArrayEquals(sub.toArray(), new Integer[]{3, 4, 5, 6, 7});
+            assertThat(l, equalTo(List.of(1, 1, 2, 2, 3, 3, 4, 4, 5)));
+        }
+        {
+            List<Integer> l = new ArrayList<>(List.of(1, 2, 3, 4, 5, 4, 3, 2, 1));
+            l.replaceAll(x -> x * x);
+            assertThat(l, equalTo(List.of(1, 4, 9, 16, 25, 16, 9, 4, 1)));
         }
     }
 }
