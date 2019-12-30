@@ -111,6 +111,49 @@ assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).dropWhile(x -> x < 5).collect(Co
 )));
 ```
 
+## group by
+
+类似于数据库中 `group by` 的操作，流处理也支持 `group by`，能根据对象中的某个字段聚合
+
+``` java
+class Student {
+    private final String grade;
+    private final String name;
+    private final int chinese;
+    private final int english;
+
+    private Student(String grade, String name, int chinese, int english) {
+        this.grade = grade;
+        this.name = name;
+        this.chinese = chinese;
+        this.english = english;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + grade + " " + name + " " + chinese + " " + english + "]";
+    }
+}
+
+Random random = new Random();
+Stream<Student> stream = Stream.generate(() ->
+        new Student(
+                "grade" + Math.abs(random.nextInt() % 4 + 1),
+                "student" + Math.abs(random.nextInt() % 1000),
+                Math.abs(random.nextInt() % 30 + 70),
+                Math.abs(random.nextInt() % 30 + 70)
+        )
+);
+
+Map<String, List<Student>> map = stream.limit(10).collect(Collectors.groupingBy(
+        x -> x.grade, Collectors.toList()
+));
+
+map.forEach((k, v) -> {
+    System.out.println(k + " => " + v);
+});
+```
+
 ## 链接
 
 - 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/StreamTest.java>
