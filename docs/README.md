@@ -4,3 +4,5 @@
 - [lambda-表达式](java-lambda-表达式.md)
 - [正则表达式](java-正则表达式.md)
 - [stream](java-stream.md)
+- [集合](java-集合.md)
+- [字典](java-字典.md)
