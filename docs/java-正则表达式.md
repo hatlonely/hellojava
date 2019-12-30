@@ -91,8 +91,8 @@ assertTrue(Pattern.matches(".*", "any string"));
 |---------------|----------------------------------------------------------------|
 | `(pattern)`   | 匹配分组并且**捕获**子表达式                                   |
 | `(?:pattern)` | 匹配分组但是**不捕获**子表达式                                 |
-| `(?=pattern)` | 正向预测，**非捕获**匹配                                       |
-| `(?!pattern)` | 反向预测，**非捕获**匹配                                       |
+
+使用 `groupCount` 获取捕获分组的数量，由于下面例子中模式串中没有小括号，所以没有捕获的分组
 
 ``` java
 Pattern pattern = Pattern.compile("^[a-z0-9]+@[a-z0-9.]+[.][a-z]{2,4}$");
@@ -101,7 +101,7 @@ assertTrue(matcher.matches());
 assertEquals(matcher.groupCount(), 0);
 ```
 
-使用 `groupCount` 获取捕获分组的数量，由于模式串中没有小括号，所以没有捕获的分组
+使用 `group` 方法获取分组的内容，分组的编号以左括号为准，`gruop(i)` 返回第 `i` 个分组，`group(0)` 代表整个匹配串
 
 ``` java
 Pattern pattern = Pattern.compile("^([a-z0-9]+)@(([a-z0-9.]+)[.]([a-z]{2,4}))$");
@@ -115,7 +115,7 @@ assertEquals(matcher.group(3), "foxmail");
 assertEquals(matcher.group(4), "com");
 ```
 
-使用 `group` 方法获取分组的内容，分组的编号以左括号为准，`gruop(i)` 返回第 `i` 个分组，`group(0)` 代表整个匹配串
+可以用 `?:` 阻止捕获，如下面代码所示，`foxmail.com` 就没有被捕获
 
 ``` java
 Pattern pattern = Pattern.compile("^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$");
@@ -129,27 +129,47 @@ assertEquals(matcher.group(2), "foxmail");
 assertEquals(matcher.group(3), "com");
 ```
 
-可以用 `?:` 阻止捕获，如上面代码所示，`foxmail.com` 就没有被捕获
+## 预测
+
+|      符号      |                              含义                              |
+|----------------|----------------------------------------------------------------|
+| `(?=pattern)`  | 正向预测，**非捕获**匹配，匹配结束                             |
+| `(?!pattern)`  | 反向预测，**非捕获**匹配，匹配结束                             |
+| `(?<=pattern)` | 正向预测，**非捕获**匹配，匹配开始                             |
+| `(?<!pattern)` | 反向预测，**非捕获**匹配，匹配开始                             |
+
+正向预测是指匹配开始或者结束的字符串需要匹配(或者反向预测不能匹配)分组，分组内的模式仅用于预测，不会出现在最终的匹配串中，这种匹配只能用于部分匹配，`?=`，`?!` 匹配开始，`?<=`，`?<!` 匹配结束
 
 ``` java
-Pattern pattern = Pattern.compile("Windows (?=95|98|NT|2000)");
-Matcher matcher = pattern.matcher("Windows 2000");
-assertTrue(matcher.find());
-assertEquals(matcher.group(), "Windows ");
-assertEquals(matcher.groupCount(), 0);
+{
+    Pattern pattern = Pattern.compile("Windows (?=95|98|NT|2000)");
+    Matcher matcher = pattern.matcher("Windows 2000");
+    assertTrue(matcher.find());
+    assertEquals(matcher.group(), "Windows ");
+    assertEquals(matcher.groupCount(), 0);
+}
+{
+    Pattern pattern = Pattern.compile("Windows (?!95|98|NT|2000)");
+    Matcher matcher = pattern.matcher("Windows vista");
+    assertTrue(matcher.find());
+    assertEquals(matcher.group(), "Windows ");
+    assertEquals(matcher.groupCount(), 0);
+}
+{
+    Pattern pattern = Pattern.compile("(?<=95|98|NT|2000) Windows");
+    Matcher matcher = pattern.matcher("2000 Windows");
+    assertTrue(matcher.find());
+    assertEquals(matcher.group(), " Windows");
+    assertEquals(matcher.groupCount(), 0);
+}
+{
+    Pattern pattern = Pattern.compile("(?<!95|98|NT|2000) Windows");
+    Matcher matcher = pattern.matcher("vista Windows");
+    assertTrue(matcher.find());
+    assertEquals(matcher.group(), " Windows");
+    assertEquals(matcher.groupCount(), 0);
+}
 ```
-
-`?=` 正向预测，匹配结束后的字符串需要匹配分组，分组内的模式仅用于预测，不会出现在最终的匹配串中，只能用于部分匹配
-
-``` java
-Pattern pattern = Pattern.compile("Windows (?!95|98|NT|2000)");
-Matcher matcher = pattern.matcher("Windows vista");
-assertTrue(matcher.find());
-assertEquals(matcher.group(), "Windows ");
-assertEquals(matcher.groupCount(), 0);
-```
-
-`?=` 反向预测，匹配结束后的字符串不能匹配分组，分组内的模式仅用于预测，不会出现在最终的匹配串中，只能用于部分匹配
 
 ## 反向引用
 
@@ -157,13 +177,13 @@ assertEquals(matcher.groupCount(), 0);
 |---------------|----------------------------------------------------------------|
 | `\1`          | 匹配捕获匹配到的反向引用，`\2` 表示第二个反向引用              |
 
+前面通过捕获获得的分组可以再后面引用，比如 `(\w+) \1` 表示两个重复的单词
+
 ``` java
 assertTrue(Pattern.matches("(\\w+) \\1", "ab ab"));
 assertTrue(Pattern.matches("(\\w+) \\1", "abc abc"));
 assertFalse(Pattern.matches("(\\w+) \\1", "abc def"));
 ```
-
-`(\w+)\1` 表示两个重复的单词
 
 ## 正则替换
 
@@ -178,6 +198,23 @@ assertEquals(pattern.matcher("hatlonely@foxmail.com").replaceAll(
 assertEquals("hatlonely@foxmail.com".replaceAll(
         "^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$", "$0 $1 $2 $3"
 ), "hatlonely@foxmail.com hatlonely foxmail com");
+```
+
+## 搜索所有匹配
+
+每次 find 调用都会匹配目标串中的一个匹配，通过多次 `find` 调用，可以找出目标串中所有的匹配
+
+``` java
+String str = "abab x acac y aeae";
+Pattern pattern = Pattern.compile("(\\w+)\\1");
+Matcher matcher = pattern.matcher(str);
+
+List<String> li = new ArrayList<>();
+while (matcher.find()) {
+    li.add(matcher.group());
+    assertThat(str.substring(matcher.start(), matcher.end()), equalTo(matcher.group()));
+}
+assertThat(li, equalTo(List.of("abab", "acac", "aeae")));
 ```
 
 ## 链接

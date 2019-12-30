@@ -2,9 +2,12 @@ package util;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 
 public class RegexTest {
@@ -78,6 +81,20 @@ public class RegexTest {
             assertEquals(matcher.group(), "Windows ");
             assertEquals(matcher.groupCount(), 0);
         }
+        {
+            Pattern pattern = Pattern.compile("(?<=95|98|NT|2000) Windows");
+            Matcher matcher = pattern.matcher("2000 Windows");
+            assertTrue(matcher.find());
+            assertEquals(matcher.group(), " Windows");
+            assertEquals(matcher.groupCount(), 0);
+        }
+        {
+            Pattern pattern = Pattern.compile("(?<!95|98|NT|2000) Windows");
+            Matcher matcher = pattern.matcher("vista Windows");
+            assertTrue(matcher.find());
+            assertEquals(matcher.group(), " Windows");
+            assertEquals(matcher.groupCount(), 0);
+        }
     }
 
     @Test
@@ -97,5 +114,19 @@ public class RegexTest {
         assertEquals("hatlonely@foxmail.com".replaceAll(
                 "^([a-z0-9]+)@(?:([a-z0-9.]+)[.]([a-z]{2,4}))$", "$0 $1 $2 $3"
         ), "hatlonely@foxmail.com hatlonely foxmail com");
+    }
+
+    @Test
+    public void testFildAll() {
+        String str = "abab x acac y aeae";
+        Pattern pattern = Pattern.compile("(\\w+)\\1");
+        Matcher matcher = pattern.matcher(str);
+
+        List<String> li = new ArrayList<>();
+        while (matcher.find()) {
+            li.add(matcher.group());
+            assertThat(str.substring(matcher.start(), matcher.end()), equalTo(matcher.group()));
+        }
+        assertThat(li, equalTo(List.of("abab", "acac", "aeae")));
     }
 }
