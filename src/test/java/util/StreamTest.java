@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -44,6 +45,32 @@ public class StreamTest {
     @After
     public void tearDown() throws IOException {
         StreamTest.deleteFile();
+    }
+
+    @Test
+    public void testCreateStream() throws IOException {
+        // 从容器中创建
+        Stream<Integer> stream1 = List.of(1, 2, 3, 4, 5).stream();
+        Stream<Integer> stream2 = Stream.of(1, 2, 3, 4, 5);
+
+        // 创建随机数
+        Stream<Integer> stream3 = new Random().ints().limit(10).boxed();
+        Stream<Integer> stream4 = ThreadLocalRandom.current().ints().limit(10).boxed();
+
+        // 文件流
+        Stream<String> stream5 = new BufferedReader(new FileReader("/tmp/test.txt")).lines();
+
+        // IntStream
+        Stream<Integer> stream6 = IntStream.range(1, 10).boxed();
+
+        // generate
+        Stream<Integer> stream7 = Stream.generate(() -> (int) System.currentTimeMillis()).limit(10);
+
+        // iterate
+        Stream<Integer> stream8 = Stream.iterate(1, x -> x + 1).limit(10);
+        Stream<Integer> stream9 = Stream.iterate(1, x -> x < 10, x -> x + 1);
+
+        System.out.println(stream8.collect(Collectors.toList()));
     }
 
     @Test
@@ -100,28 +127,42 @@ public class StreamTest {
     }
 
     @Test
-    public void testCreateStream() throws IOException {
-        // 从容器中创建
-        Stream<Integer> stream1 = List.of(1, 2, 3, 4, 5).stream();
-        Stream<Integer> stream2 = Stream.of(1, 2, 3, 4, 5);
+    public void testGroupBy() {
+        class Student {
+            private final String grade;
+            private final String name;
+            private final int chinese;
+            private final int english;
 
-        // 创建随机数
-        Stream<Integer> stream3 = new Random().ints().limit(10).boxed();
-        Stream<Integer> stream4 = ThreadLocalRandom.current().ints().limit(10).boxed();
+            private Student(String grade, String name, int chinese, int english) {
+                this.grade = grade;
+                this.name = name;
+                this.chinese = chinese;
+                this.english = english;
+            }
 
-        // 文件流
-        Stream<String> stream5 = new BufferedReader(new FileReader("/tmp/test.txt")).lines();
+            @Override
+            public String toString() {
+                return "[" + grade + " " + name + " " + chinese + " " + english + "]";
+            }
+        }
 
-        // IntStream
-        Stream<Integer> stream6 = IntStream.range(1, 10).boxed();
+        Random random = new Random();
+        Stream<Student> stream = Stream.generate(() ->
+                new Student(
+                        "grade" + Math.abs(random.nextInt() % 4 + 1),
+                        "student" + Math.abs(random.nextInt() % 1000),
+                        Math.abs(random.nextInt() % 30 + 70),
+                        Math.abs(random.nextInt() % 30 + 70)
+                )
+        );
 
-        // generate
-        Stream<Integer> stream7 = Stream.generate(() -> (int) System.currentTimeMillis()).limit(10);
+        Map<String, List<Student>> map = stream.limit(10).collect(Collectors.groupingBy(
+                x -> x.grade, Collectors.toList()
+        ));
 
-        // iterate
-        Stream<Integer> stream8 = Stream.iterate(1, x -> x + 1).limit(10);
-        Stream<Integer> stream9 = Stream.iterate(1, x -> x < 10, x -> x + 1);
-
-        System.out.println(stream8.collect(Collectors.toList()));
+        map.forEach((k, v) -> {
+            System.out.println(k + " => " + v);
+        });
     }
 }
