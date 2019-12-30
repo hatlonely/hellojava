@@ -111,3 +111,6 @@ assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).dropWhile(x -> x < 5).collect(Co
 )));
 ```
 
+## 链接
+
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/StreamTest.java>
