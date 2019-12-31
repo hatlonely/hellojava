@@ -6,6 +6,8 @@
 
 ## Map
 
+`Map` 描述的是一种映射关系，一个 key 对应一个 value，可以添加，删除，修改和获取 key/value
+
 `Map` 的主要接口如下:
 
 - `isEmpty`: 判断是否没有元素
