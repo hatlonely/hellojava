@@ -65,7 +65,7 @@ List 接口为顺序表，继承自 Collection，关注集合的定位，查找�
 - `ArrayList`: 数组实现，插入时需要移动数组中的元素，插入性能是 O(n)，向后插入是 O(1)，插入时如果数组空间不够，需要重新申请新的空间，并将原来的元素添加到新的数组中；可以根据下标定位元素，支持随机访问，get 性能是 O(1)；查找需要遍历，性能 O(n)
 - `Vector`: 和 `ArrayList` 底层一样，但是是线程安全的
 
-`List` 在 `Collection` 的基础上，提供了下面接口
+`List` 在 `Collection` 的基础上，提供了下面接口:
 
 - `get`: 按下标定位元素
 - `indexOf`: 查找元素，返回下标
@@ -172,18 +172,71 @@ assertThat(set.subSet("key3", "key7"), equalTo(Set.of("key3", "key4", "key5", "k
 
 ## Queue
 
-Queue 继承自 Collection，关注集合的有序性，支持首尾的插入和删除，util 提供了三种 Queue
+`Queue` 队列(先进先出)，继承自 `Collection`，关注集合的有序性，支持尾部插入，头部删除，以及头部元素的获取，util 提供了三种 `Queue`
 
-- `LinkedList`: LinkedList 实现了 Queue 的接口，尾部插入，头部删除
-- `ArrayDeque`: 
+- `LinkedList`: LinkedList 实现了 Queue 的接口，元素按插入顺序排列
+- `ArrayDeque`: 数组实现的 Queue，元素按插入顺序排列
+- `PriorityQueue`: 优先队列，堆实现，元素按从小到大排列
+
+`Queue` 在 `Collection` 基础上提供了如下接口:
+
+- `add`: 添加元素，如果队列满了，抛出异常
+- `remove`: 删除元素，如果队列为空，抛出异常
+- `element`: 获取头部元素，如果队列为空，抛出异常
+- `offer`: 添加元素，如果队列满了，返回 false
+- `poll`: 删除元素，如果队列为空，返回 null
+- `peek`: 获取头部元素，如果队列为空，返回 null
+
+``` java
+{
+    Queue<Integer> queue = new LinkedList<>();
+    // add / remove / element
+    assertThrows(NoSuchElementException.class, queue::remove);
+    assertThrows(NoSuchElementException.class, queue::element);
+    for (int i = 0; i < 10; i++) {
+        queue.add(i);
+    }
+    for (int i = 0; i < 10; i++) {
+        assertEquals(queue.element(), Integer.valueOf(i));
+        assertEquals(queue.remove(), Integer.valueOf(i));
+    }
+}
+{
+    Queue<Integer> queue = new LinkedList<>();
+    // offer / poll / peek
+    queue.clear();
+    assertEquals(queue.poll(), null);
+    assertEquals(queue.peek(), null);
+    for (int i = 0; i < 10; i++) {
+        queue.offer(i);
+    }
+    for (int i = 0; i < 10; i++) {
+        assertEquals(queue.peek(), Integer.valueOf(i));
+        assertEquals(queue.poll(), Integer.valueOf(i));
+    }
+}
+```
 
 ## Deque
+
+`Deque` 双端队列，继承自 `Queue`，关注集合的两端的插入和删除以及两端元素的获取，util 提供了两种 `Deque`
+
+- `LinkedList`: 链表实现的 `Deque`
+- `ArrayDeque`: 数组实现的 `Deque`
+
+`Deque` 在 `Queue` 的基础上提供了下面接口:
+
+- ``
+
+
 
 ## Stack
 
 
 ## 链接
 
-- Collection 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/CollectionTest.java>
-- List 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ListTest.java>
-- Set 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/SetTest.java>
+- `Collection` 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/CollectionTest.java>
+- `List` 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ListTest.java>
+- `Set` 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/SetTest.java>
+- `Queue` 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/QueueTest.java>
+- `Deque` 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/DequeTest.java>
