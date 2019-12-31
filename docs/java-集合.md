@@ -197,27 +197,20 @@ assertThat(set.subSet("key3", "key7"), equalTo(Set.of("key3", "key4", "key5", "k
     // add / remove / element
     assertThrows(NoSuchElementException.class, queue::remove);
     assertThrows(NoSuchElementException.class, queue::element);
-    for (int i = 0; i < 10; i++) {
-        queue.add(i);
-    }
-    for (int i = 0; i < 10; i++) {
-        assertEquals(queue.element(), Integer.valueOf(i));
-        assertEquals(queue.remove(), Integer.valueOf(i));
-    }
+    IntStream.range(0, 10).forEach(queue::add);
+    assertThat(queue.toArray(), equalTo(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    assertEquals(queue.element(), Integer.valueOf(0));
+    assertEquals(queue.remove(), Integer.valueOf(0));
 }
 {
     Queue<Integer> queue = new LinkedList<>();
     // offer / poll / peek
-    queue.clear();
     assertEquals(queue.poll(), null);
     assertEquals(queue.peek(), null);
-    for (int i = 0; i < 10; i++) {
-        queue.offer(i);
-    }
-    for (int i = 0; i < 10; i++) {
-        assertEquals(queue.peek(), Integer.valueOf(i));
-        assertEquals(queue.poll(), Integer.valueOf(i));
-    }
+    IntStream.range(0, 10).forEach(queue::offer);
+    assertThat(queue.toArray(), equalTo(new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    assertEquals(queue.peek(), Integer.valueOf(0));
+    assertEquals(queue.poll(), Integer.valueOf(0));
 }
 ```
 
