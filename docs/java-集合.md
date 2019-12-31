@@ -59,7 +59,7 @@ Collection 接口主要关注集合的添加，删除，包含
 
 ## List
 
-List 接口为顺序表，关注集合的定位，查找，修改和排序，底层有两种实现，链表和数组，链表有较好的头部插入性能，数组在随机访问的时候有很大优势，util 里主要提供了三种顺序表:
+List 接口为顺序表，继承自 Collection，关注集合的定位，查找，修改和排序，底层有两种实现，链表和数组，链表有较好的头部插入性能，数组在随机访问的时候有很大优势，util 里主要提供了三种顺序表:
 
 - `LinkedList`: 双链表实现，定位元素需要遍历，get 性能是 O(n)；插入性能 O(1)，但指定下标插入需要先定位；查找也需要遍历，性能 O(n)
 - `ArrayList`: 数组实现，插入时需要移动数组中的元素，插入性能是 O(n)，向后插入是 O(1)，插入时如果数组空间不够，需要重新申请新的空间，并将原来的元素添加到新的数组中；可以根据下标定位元素，支持随机访问，get 性能是 O(1)；查找需要遍历，性能 O(n)
@@ -170,13 +170,20 @@ assertThat(set.subSet("key3", "key7"), equalTo(Set.of("key3", "key4", "key5", "k
 }
 ```
 
-## Stack
-
 ## Queue
 
+Queue 继承自 Collection，关注集合的有序性，支持首尾的插入和删除，util 提供了三种 Queue
+
+- `LinkedList`: LinkedList 实现了 Queue 的接口，尾部插入，头部删除
+- `ArrayDeque`: 
+
 ## Deque
+
+## Stack
+
 
 ## 链接
 
 - Collection 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/CollectionTest.java>
 - List 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ListTest.java>
+- Set 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/SetTest.java>
