@@ -42,7 +42,8 @@ public class MapTest {
             Map<String, String> map = new HashMap<>();
             map.put("key0", "val0");
             map.putAll(Map.of("key1", "val1", "key2", "val2"));
-            map.putIfAbsent("key3", "val3");
+            assertEquals(map.putIfAbsent("key3", "val3"), null);
+            assertEquals(map.putIfAbsent("key3", "val33"), "val3");
             assertThat(map, equalTo(Map.of(
                     "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
             )));
@@ -103,7 +104,6 @@ public class MapTest {
                     "key0", "val0->newVal", "key1", "val1", "key2", "val2", "key3", "newVal"
             )));
         }
-
     }
 
     @Test
