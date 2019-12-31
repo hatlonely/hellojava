@@ -2,77 +2,108 @@ package util;
 
 import org.junit.Test;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.*;
 
 public class MapTest {
     @Test
     public void testMap() {
-        for (Map<String, String> m : Arrays.asList(
-                new TreeMap<String, String>(),
-                new HashMap<String, String>(),
-                new LinkedHashMap<String, String>(),
-                new Hashtable<String, String>(),
-                new ConcurrentHashMap<String, String>(),
-                new WeakHashMap<String, String>()
-        )) {
-            assertTrue(m.isEmpty());
-            for (int i = 0; i < 5; i++) {
-                m.put("key" + i, "val" + i);
-            }
-            System.out.println(m);
-
-            for (int i = 0; i < 5; i++) {
-                assertTrue(m.containsKey("key" + i));
-                assertEquals(m.get("key" + i), "val" + i);
-            }
-            assertEquals(m.size(), 5);
-            assertFalse(m.isEmpty());
-            assertFalse(m.containsKey("key6"));
-
-            assertEquals(m.remove("key3"), "val3");
-            assertEquals(m.remove("key3"), null);
-
-            m.putAll(Map.of(
-                    "key2", "val2",
-                    "key3", "val3",
-                    "key4", "val4"
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
             ));
-            System.out.println(m);
-            Set keys = m.keySet();
-            for (int i = 0; i < 5; i++) {
-                assertTrue(keys.contains("key" + i));
+            assertEquals(map.size(), 4);
+            assertFalse(map.isEmpty());
+            assertTrue(map.containsKey("key3"));
+
+            assertEquals(map.get("key3"), "val3");
+            assertEquals(map.get("key6"), null);
+            assertEquals(map.getOrDefault("key3", "defaultValue"), "val3");
+            assertEquals(map.getOrDefault("key6", "defaultValue"), "defaultValue");
+
+            assertThat(map.keySet(), equalTo(Set.of("key0", "key1", "key2", "key3")));
+            assertThat(map.values(), hasItems("val0", "val1", "val2", "val3"));
+
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                System.out.println(entry.getKey() + " => " + entry.getValue());
             }
-            Collection vals = m.values();
-            for (int i = 0; i < 5; i++) {
-                assertTrue(vals.contains("val" + i));
-            }
+            map.forEach((k, v) -> System.out.println(k + " => " + v));
 
-            Set<Map.Entry<String, String>> entries = m.entrySet();
-            for (Map.Entry it : entries) {
-                System.out.println(it.getKey() + "=>" + it.getValue());
-            }
-            m.forEach((k, v) -> System.out.println(k + " => " + v));
-
-            assertEquals(m.getOrDefault("key3", "val33"), "val3");
-            assertEquals(m.getOrDefault("key9", "val99"), "val99");
-            assertEquals(m.putIfAbsent("key3", "val33"), "val3");   // 无值才插入
-            assertEquals(m.replace("key3", "val33"), "val3");       // 有值才替换
-            assertEquals(m.replace("key9", "val99"), null);
-            assertEquals(m.get("key9"), null);
-            assertEquals(m.get("key3"), "val33");
-            assertFalse(m.replace("key3", "val3", "val33"));    // 老值相等才修改
-            assertTrue(m.replace("key3", "val33", "val3"));
-
-            assertEquals(m.compute("key3", (k, v) -> (k + v)), "key3val3");
-            assertEquals(m.get("key3"), "key3val3");
-            assertEquals(m.computeIfPresent("key5", (k, v) -> (k + v)), null);
-            assertEquals(m.computeIfAbsent("key5", (k) -> (k.replace("key", "val"))), "val5");
-
-            assertEquals(m.merge("key5", "nv", (ov, nv) -> (ov + nv)), "val5nv");
+            map.clear();
+            assertTrue(map.isEmpty());
         }
+        {
+            Map<String, String> map = new HashMap<>();
+            map.put("key0", "val0");
+            map.putAll(Map.of("key1", "val1", "key2", "val2"));
+            map.putIfAbsent("key3", "val3");
+            assertThat(map, equalTo(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
+            )));
+        }
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
+            ));
+            assertEquals(map.remove("errorKey"), null);
+            assertEquals(map.remove("key0"), "val0");
+            assertFalse(map.remove("key1", "errorValue"));
+            assertTrue(map.remove("key1", "val1"));
+            assertThat(map, equalTo(Map.of(
+                    "key2", "val2", "key3", "val3"
+            )));
+        }
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
+            ));
+            assertEquals(map.replace("errorKey", "replaceValue"), null);
+            assertEquals(map.replace("key0", "replaceValue"), "val0");
+            assertFalse(map.replace("key1", "errorValue", "replaceValue"));
+            assertTrue(map.replace("key1", "val1", "replaceValue"));
+            assertThat(map, equalTo(Map.of(
+                    "key0", "replaceValue", "key1", "replaceValue", "key2", "val2", "key3", "val3"
+            )));
+        }
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2", "key3", "val3"
+            ));
+            map.replaceAll((k, v) -> k + v);
+            assertThat(map, equalTo(Map.of(
+                    "key0", "key0val0", "key1", "key1val1", "key2", "key2val2", "key3", "key3val3"
+            )));
+        }
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2"
+            ));
+            assertEquals(map.compute("key0", (k, v) -> k + v), "key0val0");
+            assertEquals(map.computeIfPresent("key1", (k, v) -> k + v), "key1val1");
+            assertEquals(map.computeIfPresent("key6", (k, v) -> k + v), null);
+            assertEquals(map.computeIfAbsent("key2", k -> k + k.replace("key", "val")), "val2");
+            assertEquals(map.computeIfAbsent("key3", k -> k + k.replace("key", "val")), "key3val3");
+            assertThat(map, equalTo(Map.of(
+                    "key0", "key0val0", "key1", "key1val1", "key2", "val2", "key3", "key3val3"
+            )));
+        }
+        {
+            Map<String, String> map = new HashMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2"
+            ));
+            assertEquals(map.merge("key0", "newVal", (oldValue, newValue) -> (oldValue + "->" + newValue)), "val0->newVal");
+            assertEquals(map.merge("key3", "newVal", (oldValue, newValue) -> (oldValue + "->" + newValue)), "newVal");
+            assertThat(map, equalTo(Map.of(
+                    "key0", "val0->newVal", "key1", "val1", "key2", "val2", "key3", "newVal"
+            )));
+        }
+
     }
 
     @Test
