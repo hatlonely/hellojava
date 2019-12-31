@@ -1,5 +1,9 @@
 # java 集合
 
+## 数据结构总览
+
+![数据结构](datastruct.png)
+
 ## 集合接口
 
 Collection 接口主要关注集合的添加，删除，包含
@@ -290,6 +294,9 @@ assertThat(set.subSet("key3", "key7"), equalTo(Set.of("key3", "key4", "key5", "k
 
 ## Stack
 
+和 `Queue` 的**先进先出**不同，`Stack` 是一种代表**后进先出**的数据结构，util 中并没有提供 `Stack` 接口，事实上 `Deque` 中已经包含了 `Stack` 接口，因此当你需要一个 `Stack` 的时候，可以构造一个 `Deque`，java doc 也是这么建议的
+
+此外，util 中还有一个 `Stack` 类，继承自 `Vector`，线程安全，这个类的设计和定位比较尴尬，不建议使用
 
 ## 链接
 
