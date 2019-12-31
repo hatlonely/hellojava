@@ -4,7 +4,7 @@
 
 ![数据结构](datastruct.png)
 
-## 集合接口
+## Collection
 
 Collection 接口主要关注集合的添加，删除，包含
 
