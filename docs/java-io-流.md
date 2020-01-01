@@ -227,9 +227,9 @@ writer.flush();
 writer.close();
 ```
 
-## 字节文件流
+## 文件字节流
 
-文件流关注文件的读取和写入
+文件字节流关注文件的读取和写入
 
 ``` java
 {
@@ -359,7 +359,7 @@ writer.close();
 }
 ```
 
-## 可回退字节流
+## 回退字节流
 
 可回退字节流内部维护了一个固定大小的缓冲区(可通过构造函数配置 buffer 的大小)，允许将字节回退到缓冲区，如果超过了缓冲区大小，会抛出异常
 
@@ -429,6 +429,213 @@ es.execute(() -> {
         assertEquals(oin.readUTF(), "如果你还没能找到让自己热爱的事业，继续寻找，不要放弃");
         oin.close();
     } catch (IOException e) {
+        e.printStackTrace();
+    }
+});
+
+try {
+    es.shutdown();
+    while (!es.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+        // nothing to do
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
+```
+
+## 文件字符流
+
+文件字符流关注文件的读取和写入，使用默认的 utf-8 来编码
+
+``` java
+{
+    FileWriter fw = new FileWriter("/tmp/test.txt");
+    assertEquals(fw.getEncoding(), "UTF8");
+    System.out.println(fw.getEncoding());
+    fw.write("初学者的心态；拥有初学者的心态是件了不起的事情");
+    fw.flush();
+    fw.close();
+}
+{
+    FileReader fr = new FileReader("/tmp/test.txt");
+    assertEquals(fr.getEncoding(), "UTF8");
+    StringBuilder sb = new StringBuilder();
+    for (int ch = fr.read(); ch != -1; ch = fr.read()) {
+        sb.append((char) ch);
+    }
+    assertEquals(sb.toString(), "初学者的心态；拥有初学者的心态是件了不起的事情");
+    fr.close();
+}
+```
+
+## 缓冲字符流
+
+采用装饰者模式，装饰在其他字符流上，增加缓存功能，提高读写性能。`Files` 提供了缓冲字符流的构造，可以指定编码
+
+`BufferedWriter` 在 `Writer` 的基础上，新增了如下接口:
+
+- `newLine`: 写入一个换行符
+
+`BufferedReader` 在 `Reader` 的基础上，新增了如下接口:
+
+- `readLine`: 读取一个行，如果没有新的行，返回 null
+- `lines`: 返回一个 `java.util.stream.Stream`，支持 java 8 的流式处理
+
+``` java
+{
+    // BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
+    BufferedWriter bw = Files.newBufferedWriter(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+    bw.write("穷则独善其身，达则兼济天下");
+    bw.newLine();
+    bw.write("玉不琢、不成器，人不学、不知义");
+    bw.newLine();
+    bw.close();
+}
+{
+    // BufferedReader br = new BufferedReader(new FileReader("/tmp/test.txt"));
+    BufferedReader br = Files.newBufferedReader(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+    assertEquals(br.readLine(), "穷则独善其身，达则兼济天下");
+    assertEquals(br.readLine(), "玉不琢、不成器，人不学、不知义");
+    assertEquals(br.readLine(), null);
+    br.close();
+}
+{
+    // BufferedReader br = new BufferedReader(new FileReader("/tmp/test.txt"));
+    BufferedReader br = Files.newBufferedReader(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+    assertThat(br.lines().collect(Collectors.toList()), equalTo(List.of(
+            "穷则独善其身，达则兼济天下",
+            "玉不琢、不成器，人不学、不知义"
+    )));
+    br.close();
+}
+```
+
+## StreamReaderWriter
+
+`InputStreamReader` 和 `OutputStreamWriter` 能将字节流转化字符流，还可以指定编码
+
+``` java
+{
+    OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream("/tmp/test.txt"), "utf-8");
+    ow.write("你究竟是想一辈子卖糖水，还是希望获得改变世界的机遇");
+    ow.flush();
+    ow.close();
+}
+{
+    InputStreamReader rw = new InputStreamReader(new FileInputStream("/tmp/test.txt"), "utf-8");
+    StringBuilder sb = new StringBuilder();
+    for (int ch = rw.read(); ch != -1; ch = rw.read()) {
+        sb.append((char) ch);
+    }
+    assertEquals(sb.toString(), "你究竟是想一辈子卖糖水，还是希望获得改变世界的机遇");
+    rw.close();
+}
+```
+
+## 字符串流
+
+字符串构建的流
+
+``` java
+{
+    StringWriter sw = new StringWriter();
+    sw.write("学而不思则罔，思而不学则殆");
+    assertEquals(sw.getBuffer().toString(), "学而不思则罔，思而不学则殆");
+    sw.close();
+}
+{
+    StringReader sr = new StringReader("一年之计在于春，一日之计在于晨");
+    StringBuilder sb = new StringBuilder();
+    for (int ch = sr.read(); ch != -1; ch = sr.read()) {
+        sb.append((char) ch);
+    }
+    assertEquals(sb.toString(), "一年之计在于春，一日之计在于晨");
+}
+```
+
+## LineNumberReader
+
+`LineNumberReader` 支持行号的字符流
+
+`LineNumberReader` 在 `Reader` 的基础上，新增了如下接口:
+
+- `setLineNumber`: 设置开始的文件行号，默认是 1
+- `getLineNumber`: 获取当前的文件行号
+
+``` java
+{
+    BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
+    bw.write("富贵不能淫\n贫贱不能移\n威武不能屈\n此之谓大丈夫\n");
+    bw.close();
+}
+{
+    LineNumberReader lr = new LineNumberReader(new BufferedReader(new FileReader("/tmp/test.txt")));
+    List<String> lines = new LinkedList<>();
+    for (String line = lr.readLine(); line != null; line = lr.readLine()) {
+        lines.add(lr.getLineNumber() + " " + line);
+    }
+    assertThat(lines, equalTo(List.of(
+            "1 富贵不能淫", "2 贫贱不能移", "3 威武不能屈", "4 此之谓大丈夫"
+    )));
+}
+```
+
+## 回退字符流
+
+可回退字符流内部维护了一个固定大小的缓冲区(可通过构造函数配置 buffer 的大小)，允许将字符回退到缓冲区，如果超过了缓冲区大小，会抛出异常
+
+`PushbackReader` 在 `Reader` 的基础上新增了如下接口:
+
+- `unread`: 回退一个字符
+- `unread(cbar[])`: 将 buffer 中的数据回退到流的缓冲区
+- `unread(char[], offset, length)`: 从 buffer 的 offset 处回退 length 个字节到流缓冲区
+
+``` java
+PushbackReader pr = new PushbackReader(new StringReader("蚍蜉撼大树,可笑不自量"), 10);
+char[] buf = new char[5];
+assertEquals(pr.read(buf), 5);
+assertArrayEquals(buf, "蚍蜉撼大树".toCharArray());
+pr.unread(buf);
+assertEquals(pr.read(buf), 5);
+assertArrayEquals(buf, "蚍蜉撼大树".toCharArray());
+// 超过 buffer 的大小，抛出 IOException
+assertThrows(IOException.class, () -> pr.unread("01234567890".toCharArray()));
+```
+
+## 管道字符流
+
+`PipedReader` 和 `PipedWriter` 通过调用 `connect` 方法建立连接，往 `PipedWriter` 写入，能从 `PipedReader` 读取，这种管道模式是一对一的，对一个管道流建立两次连接会抛出异常
+
+`PipedWriter` 在 `Writer` 的基础上提供如下接口:
+
+- `connect`: 与一个 `PipedReader` 建立连接，如果已经建立连接，将抛出异常
+
+`PipedReader` 在 `Reader` 的基础上提供如下接口:
+
+- `connect`: 与一个 `PipedWriter` 建立连接，如果已经建立连接，将抛出异常
+
+``` java
+ExecutorService es = Executors.newCachedThreadPool();
+PipedReader pr = new PipedReader();
+PipedWriter pw = new PipedWriter();
+pr.connect(pw);
+
+es.execute(() -> {
+    try {
+        BufferedWriter bw = new BufferedWriter(pw);
+        bw.write("活着就是为了改变世界，难道还有其他原因吗");
+        bw.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+});
+
+es.execute(() -> {
+    try {
+        BufferedReader br = new BufferedReader(pr);
+        assertEquals(br.readLine(), "活着就是为了改变世界，难道还有其他原因吗");
+        br.close();
+    } catch (Exception e) {
         e.printStackTrace();
     }
 });
