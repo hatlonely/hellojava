@@ -88,7 +88,7 @@ assertArrayEquals(Arrays.copyOfRange(ia, 3, 8), new int[]{3, 4, 5, 6, 7});
 
 ## Optional
 
-Optional 是 java 8 引入的可选类型，Optional 暗示用户该值有可能为空，Option 提供如下接口
+`Optional` 是 java 8 引入的可选类型，Optional 暗示用户该值有可能为空，`Optional` 提供如下接口
 
 - `isPresent`: 是否为空
 - `get`: 获取对应类型的值，如果为空，会抛出异常
