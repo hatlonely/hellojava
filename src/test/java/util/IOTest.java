@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -98,6 +99,12 @@ public class IOTest {
             assertEquals(in.read(), '3');
             in.close();
         }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            for (int ch = in.read(); ch != -1; ch = in.read()) {
+                System.out.println(ch);
+            }
+        }
     }
 
     @Test
@@ -108,6 +115,54 @@ public class IOTest {
         out.write("0123456789".getBytes(), 1, 2);
         out.flush();
         out.close();
+    }
+
+    @Test
+    public void testReader() throws IOException {
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            assertEquals(reader.read(), '0');
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            char[] buf = new char[4];
+            assertEquals(reader.read(buf), 4);
+            assertArrayEquals(buf, "0123".toCharArray());
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            char[] buf = new char[20];
+            assertEquals(reader.read(buf), 10);
+            assertArrayEquals(Arrays.copyOf(buf, 10), "0123456789".toCharArray());
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            char[] buf = new char[20];
+            assertEquals(reader.read(buf, 1, 4), 4);
+            assertArrayEquals(Arrays.copyOfRange(buf, 1, 1 + 4), "0123".toCharArray());
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            CharBuffer buf = CharBuffer.allocate(20);
+            assertEquals(reader.read(buf), 10);
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            assertTrue(reader.ready());
+            assertEquals(reader.skip(2), 2);
+            assertEquals(reader.read(), '2');
+            reader.mark(0);
+            assertEquals(reader.read(), '3');
+            reader.reset();
+            assertEquals(reader.read(), '3');
+            reader.close();
+        }
+        {
+            Reader reader = new CharArrayReader("0123456789".toCharArray());
+            for (int ch = reader.read(); ch != -1; ch = reader.read()) {
+                System.out.println(ch);
+            }
+        }
     }
 
     @Test

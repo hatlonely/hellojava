@@ -13,14 +13,14 @@ IO 流主要提供四个接口
 
 ## InputStream
 
-`InputStream` 输入字节流，关注字节的读取，io 提供如下 InputStream 的实现
+`InputStream` 输入字节流，关注字节的读取，io 包提供如下 InputStream 的实现
 
-- `ByteArrayInputStream`: 通过 byte 数组构建的流
-- `FileInputStream`: 文件输入流
-- `PipedInputStream`: 管道流，可和其他的 PipedOutStream 连接，通常用于线程间通信
+- `ByteArrayInputStream`: 字节数组输入流
+- `FileInputStream`: 文件字节输入流
+- `PipedInputStream`: 管道输入流，可和其他的 PipedOutStream 连接，通常用于线程间通信
 - `DataInputStream`: 二进制数据输入流
 - `ObjectInputStream`: 对象输入流
-- `BufferedInputStream`: 带缓冲 buffer 的输入流
+- `BufferedInputStream`: 带缓冲 buffer 的字节输入流
 - `SequenceInputStream`: 能将多个字节流合并成一个
 - `PushbackInputStream`: 能回退的字节流
 
@@ -82,6 +82,12 @@ InputStream 提供如下接口:
     assertEquals(in.read(), '3');
     in.close();
 }
+{
+    InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+    for (int ch = in.read(); ch != -1; ch = in.read()) {
+        System.out.println(ch);
+    }
+}
 ```
 
 ## OutputStream
@@ -90,7 +96,7 @@ InputStream 提供如下接口:
 
 - `ByteArrayOutputStream`: 输出 byte 数组
 - `FileOutputStream`: 文件输出流
-- `PipedOutputStream`: 管道流，可和其他的 PipedInputStream 连接，通常用于线程间通信
+- `PipedOutputStream`: 管道输出流，可和其他的 PipedInputStream 连接，通常用于线程间通信
 - `DataOutputStream`: 二进制数据输出流
 - `ObjectOutputStream`: 对象输出流
 - `BufferedOutputStream`: 带缓冲 buffer 的输出流
@@ -115,7 +121,80 @@ out.close();
 
 ## Reader
 
+`Reader` 字符输入流，关注字符的读取，io 包提供如下 `Reader` 的实现
+
+- `CharArrayReader`: 字符数组输入流
+- `FileReader`: 文件字符输入流
+- `PipedReader`: 管道输入流，可以和 `PipedWriter` 连接，通常用于线程间通信
+- `StringReader`: 字符串输入流
+- `BufferedReader`: 带缓冲 buffer 的字符输入流
+- `LineNumberReader`: 带行号的字符输入流
+- `PushbackReader`: 能回退的字符输入流
+
+Reader 提供如下接口:
+
+- ``
+
+``` java
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    assertEquals(reader.read(), '0');
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    char[] buf = new char[4];
+    assertEquals(reader.read(buf), 4);
+    assertArrayEquals(buf, "0123".toCharArray());
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    char[] buf = new char[20];
+    assertEquals(reader.read(buf), 10);
+    assertArrayEquals(Arrays.copyOf(buf, 10), "0123456789".toCharArray());
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    char[] buf = new char[20];
+    assertEquals(reader.read(buf, 1, 4), 4);
+    assertArrayEquals(Arrays.copyOfRange(buf, 1, 1 + 4), "0123".toCharArray());
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    CharBuffer buf = CharBuffer.allocate(20);
+    assertEquals(reader.read(buf), 10);
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    assertTrue(reader.ready());
+    assertEquals(reader.skip(2), 2);
+    assertEquals(reader.read(), '2');
+    reader.mark(0);
+    assertEquals(reader.read(), '3');
+    reader.reset();
+    assertEquals(reader.read(), '3');
+    reader.close();
+}
+{
+    Reader reader = new CharArrayReader("0123456789".toCharArray());
+    for (int ch = reader.read(); ch != -1; ch = reader.read()) {
+        System.out.println(ch);
+    }
+}
+```
+
 ## Writer
+
+`Writer` 字符输出流，关注字符的写入，io 包提供如下 `Writer` 的实现
+
+- `CharArrayWriter`: 字符数组输出流
+- `FileWriter`: 文件字符输出流
+- `PipedWriter`: 管道输出流，可以和 `PipedReader` 连接，通常用于线程间通信
+- `StringWriter`: 字符串输出流
+- `BufferedWriter`: 带缓冲 buffer 的字符输出流
+
+Writer 提供如下接口:
+
+- ``
 
 ## 链接
 
