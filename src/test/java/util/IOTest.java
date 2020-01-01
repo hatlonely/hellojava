@@ -10,17 +10,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+//import static org.junit.Assert.*;
 
 
 class Point implements Serializable {
     private static final long serialVersionUID = 1420672609912364160L;
-
+    private final int y;
     int x;
-    int y;
 
     Point(int x, int y) {
         this.x = x;
@@ -181,7 +183,143 @@ public class IOTest {
     }
 
     @Test
-    public void testFile() {
+    public void testFileStream() throws IOException {
+        {
+            FileOutputStream fout = new FileOutputStream("/tmp/test.txt");
+            fout.write("No patient who, who has no wisdom".getBytes());
+            fout.close();
+        }
+        {
+            FileInputStream fin = new FileInputStream("/tmp/test.txt");
+            assertArrayEquals(fin.readAllBytes(), "No patient who, who has no wisdom".getBytes());
+            fin.close();
+        }
+    }
+
+    @Test
+    public void testDataStream() throws IOException {
+        {
+            DataOutputStream dout = new DataOutputStream(new FileOutputStream("/tmp/test.txt"));
+            dout.writeInt(10);
+            dout.writeUTF("Rome wasn’t built in one day");
+            dout.close();
+        }
+        {
+            DataInputStream din = new DataInputStream(new FileInputStream("/tmp/test.txt"));
+            assertEquals(din.readInt(), 10);
+            assertEquals(din.readUTF(), "Rome wasn’t built in one day");
+            din.close();
+        }
+    }
+
+    @Test
+    public void testObjectStream() throws IOException {
+        {
+            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream("/tmp/test.txt"));
+            oout.writeInt(10);
+            oout.writeUTF("Nothing is impossible to a willing heart");
+            oout.close();
+        }
+        {
+            ObjectInputStream oin = new ObjectInputStream(new FileInputStream("/tmp/test.txt"));
+            assertEquals(oin.readInt(), 10);
+            assertEquals(oin.readUTF(), "Nothing is impossible to a willing heart");
+            oin.close();
+        }
+    }
+
+    @Test
+    public void testBufferedStream() throws IOException {
+        {
+            BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream("/tmp/test.txt"));
+            bout.write("People lack the willpower, rather than strength".getBytes());
+            bout.close();
+        }
+        {
+            BufferedInputStream bin = new BufferedInputStream(new FileInputStream("/tmp/test.txt"));
+            assertArrayEquals(bin.readAllBytes(), "People lack the willpower, rather than strength".getBytes());
+            bin.close();
+        }
+    }
+
+    @Test
+    public void testSequenceInputStream() throws IOException {
+        InputStream in1 = new ByteArrayInputStream("For man is man and master of his fate\n".getBytes());
+        InputStream in2 = new ByteArrayInputStream("Cease to struggle and you cease to live\n".getBytes());
+        Vector<InputStream> vi = new Vector<>(List.of(in1, in2));
+        SequenceInputStream sin = new SequenceInputStream(vi.elements());
+        assertArrayEquals(sin.readAllBytes(), "For man is man and master of his fate\nCease to struggle and you cease to live\n".getBytes());
+    }
+
+    @Test
+    public void testPushbackInputStream() throws IOException {
+        PushbackInputStream pin = new PushbackInputStream(new ByteArrayInputStream("Failure is the mother of success".getBytes()), 10);
+        byte[] buf = new byte[7];
+        assertEquals(pin.read(buf), 7);
+        assertArrayEquals(buf, "Failure".getBytes());
+        pin.unread(buf);
+        assertEquals(pin.read(buf), 7);
+        assertArrayEquals(buf, "Failure".getBytes());
+        // 查过 buffer 的大小，抛出 IOException
+        assertThrows(IOException.class, () -> pin.unread("01234567890".getBytes()));
+    }
+
+    @Test
+    public void testPushbackReader() throws IOException {
+        PushbackReader pr = new PushbackReader(new StringReader("蚍蜉撼大树,可笑不自量"), 10);
+        char[] buf = new char[5];
+        assertEquals(pr.read(buf), 5);
+        assertArrayEquals(buf, "蚍蜉撼大树".toCharArray());
+        pr.unread(buf);
+        assertEquals(pr.read(buf), 5);
+        assertArrayEquals(buf, "蚍蜉撼大树".toCharArray());
+        assertThrows(IOException.class, () -> pr.unread("01234567890".toCharArray()));
+    }
+
+    @Test
+    public void testFileReaderWriter() throws IOException {
+        {
+            FileWriter fw = new FileWriter("/tmp/test2.txt");
+            assertEquals(fw.getEncoding(), "UTF8");
+            System.out.println(fw.getEncoding());
+            fw.write("初学者的心态；拥有初学者的心态是件了不起的事情");
+            fw.flush();
+            fw.close();
+        }
+        {
+            FileReader fr = new FileReader("/tmp/test2.txt");
+            assertEquals(fr.getEncoding(), "UTF8");
+            StringBuilder sb = new StringBuilder();
+            for (int ch = fr.read(); ch != -1; ch = fr.read()) {
+                sb.append((char) ch);
+            }
+            assertEquals(sb.toString(), "初学者的心态；拥有初学者的心态是件了不起的事情");
+            fr.close();
+        }
+    }
+
+    @Test
+    public void testStreamReaderWriter() throws IOException {
+        {
+            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream("/tmp/test1.txt"), "utf-8");
+            ow.write("你究竟是想一辈子卖糖水，还是希望获得改变世界的机遇");
+            ow.flush();
+            ow.close();
+        }
+        {
+            InputStreamReader rw = new InputStreamReader(new FileInputStream("/tmp/test1.txt"), "utf-8");
+            StringBuilder sb = new StringBuilder();
+            for (int ch = rw.read(); ch != -1; ch = rw.read()) {
+                sb.append((char) ch);
+            }
+            assertEquals(sb.toString(), "你究竟是想一辈子卖糖水，还是希望获得改变世界的机遇");
+            rw.close();
+        }
+    }
+
+
+    @Test
+    public void testFile1() {
         {
             File file = new File("/tmp/test.txt");
             assertFalse(file.isDirectory());
@@ -203,7 +341,7 @@ public class IOTest {
     }
 
     @Test
-    public void testFileReaderWriter() throws Exception {
+    public void testFileReaderWriter1() throws Exception {
         {
             BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
             bw.write("The Universe in a Nutshell");
@@ -239,46 +377,6 @@ public class IOTest {
                 System.out.println(scanner.next());
             }
             scanner.close();
-        }
-    }
-
-    @Test
-    public void testFileStream() throws Exception {
-        {
-            ObjectOutputStream oos = new ObjectOutputStream(
-                    new BufferedOutputStream(new FileOutputStream("/tmp/test.bin")));
-            oos.writeInt(123456789);
-            oos.writeObject("hello world");
-            oos.writeObject(new Point(3, 4));
-            oos.close();
-        }
-        {
-            ObjectInputStream ois = new ObjectInputStream(
-                    new BufferedInputStream(new FileInputStream("/tmp/test.bin")));
-            assertEquals(ois.readInt(), 123456789);
-            assertEquals(ois.readObject(), "hello world");
-            Point point = (Point) ois.readObject();
-            assertEquals(point.x, 3);
-            assertEquals(point.y, 4);
-            ois.close();
-        }
-    }
-
-    @Test
-    public void testCharArray() throws IOException {
-        {
-            ByteArrayOutputStream aos = new ByteArrayOutputStream();
-            aos.write("hello world".getBytes());
-            ByteArrayInputStream ais = new ByteArrayInputStream(aos.toByteArray());
-            assertEquals("hello world", new String(ais.readAllBytes()));
-        }
-        {
-            CharArrayWriter writer = new CharArrayWriter();
-            writer.write("hello world");
-            CharArrayReader reader = new CharArrayReader(writer.toCharArray());
-            char[] buf = new char[11];
-            assertEquals(reader.read(buf), "hello world".length());
-            assertEquals(new String(buf), "hello world");
         }
     }
 
@@ -327,41 +425,6 @@ public class IOTest {
 
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             System.out.println(reader.getLineNumber() + " " + line);
-        }
-    }
-
-    @Test
-    public void testPushBack() throws IOException {
-        {
-            PushbackInputStream pis = new PushbackInputStream(new ByteArrayInputStream("hello world".getBytes()));
-            byte[] buf = new byte[11];
-            assertEquals(pis.read(buf, 0, 11), 11);
-            assertEquals(new String(buf), "hello world");
-            pis.unread('b');
-            assertEquals(pis.read(), 'b');
-        }
-        {
-            PushbackReader pr = new PushbackReader(new CharArrayReader("hello world".toCharArray()));
-            char[] buf = new char[11];
-            assertEquals(pr.read(buf, 0, 11), 11);
-            assertEquals(new String(buf), "hello world");
-            pr.unread('b');
-            assertEquals(pr.read(), 'b');
-        }
-    }
-
-    @Test
-    public void testSequence() throws IOException {
-        InputStream is1 = new ByteArrayInputStream("abcdefghijklmnopqrstuvwxyz".getBytes());
-        InputStream is2 = new ByteArrayInputStream("0123456789".getBytes());
-
-        Vector<InputStream> vi = new Vector<>();
-        vi.add(is1);
-        vi.add(is2);
-        SequenceInputStream ss = new SequenceInputStream(vi.elements());
-
-        for (int b = ss.read(); b != -1; b = ss.read()) {
-            System.out.println((char) b);
         }
     }
 }
