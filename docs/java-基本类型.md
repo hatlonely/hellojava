@@ -86,6 +86,48 @@ assertArrayEquals(Arrays.copyOf(ia, 5), new int[]{0, 1, 2, 3, 4});
 assertArrayEquals(Arrays.copyOfRange(ia, 3, 8), new int[]{3, 4, 5, 6, 7});
 ```
 
+## Optional
+
+Optional 是 java 8 引入的可选类型，Optional 暗示用户该值有可能为空，Option 提供如下接口
+
+- `isPresent`: 是否为空
+- `get`: 获取对应类型的值，如果为空，会抛出异常
+- `orElse`: 获取对应类型的值，如果为空，返回参数
+- `filter`: 如果满足谓词，返回当前 Optional，如果不满足，返回 Optional.empty
+- `map`: 对当前值执行 Function，返回 Founction 的返回值，并用 Optional 封装返回值
+- `flatMap`: 和 map 一样，但是要求 Function 的返回值已经是一个 Optional 对象
+
+``` java
+{
+    Optional<Integer> i1 = Optional.empty();
+    Optional<Integer> i2 = Optional.ofNullable(null);
+    Optional<Integer> i3 = Optional.ofNullable(6);
+    Optional<Integer> i4 = Optional.of(6);
+}
+{
+    assertFalse(Optional.<Integer>empty().isPresent());
+    assertFalse(Optional.<Integer>ofNullable(null).isPresent());
+    assertTrue(Optional.ofNullable(6).isPresent());
+    assertTrue(Optional.of(6).isPresent());
+}
+{
+    assertThrows(NoSuchElementException.class, Optional.<Integer>empty()::get);
+    assertEquals(Optional.of(6).get(), Integer.valueOf(6));
+}
+{
+    assertEquals(Optional.<Integer>empty().orElse(0), Integer.valueOf(0));
+    assertEquals(Optional.of(6).orElse(0), Integer.valueOf(6));
+    assertEquals(Optional.<Integer>empty().orElseGet(() -> 0), Integer.valueOf(0));
+    assertEquals(Optional.of(6).orElseGet(() -> 0), Integer.valueOf(6));
+}
+{
+    assertEquals(Optional.of(6).filter(i -> i % 2 == 0), Optional.of(6));
+    assertEquals(Optional.of(6).filter(i -> i % 2 == 1), Optional.empty());
+    assertEquals(Optional.of(6).map(i -> i.toString()), Optional.of("6"));
+    assertEquals(Optional.of(6).flatMap(i -> Optional.of(i * i)), Optional.of(36));
+}
+```
+
 ## 链接
 
 - 基本类型测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/NumberTest.java>

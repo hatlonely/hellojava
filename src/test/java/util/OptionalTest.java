@@ -12,46 +12,32 @@ public class OptionalTest {
     @Test
     public void testOptionalCreate() {
         {
-            Optional<Integer> i = Optional.empty();
-            assertFalse(i.isPresent());
-            assertThrows(NoSuchElementException.class, () -> i.get());
-        }
-        {
-            Optional<Integer> i = Optional.ofNullable(null);
-            assertFalse(i.isPresent());
-            assertThrows(NoSuchElementException.class, () -> i.get());
-        }
-        {
-            Optional<Integer> i = Optional.of(5);
-            assertTrue(i.isPresent());
-            assertEquals(i.get(), Integer.valueOf(5));
-        }
-        {
-            Optional<Integer> i = Optional.ofNullable(5);
-            assertTrue(i.isPresent());
-            assertEquals(i.get(), Integer.valueOf(5));
-        }
-    }
-
-    @Test
-    public void testOptionalGet() {
-        {
             Optional<Integer> i1 = Optional.empty();
-            Optional<Integer> i2 = Optional.of(5);
-
-            assertEquals(i1.orElse(6), Integer.valueOf(6));
-            assertEquals(i2.orElse(6), Integer.valueOf(5));
-
-            assertEquals(i1.orElseGet(() -> 66), Integer.valueOf(66));
-            assertEquals(i2.orElseGet(() -> 66), Integer.valueOf(5));
+            Optional<Integer> i2 = Optional.ofNullable(null);
+            Optional<Integer> i3 = Optional.ofNullable(6);
+            Optional<Integer> i4 = Optional.of(6);
         }
         {
-            Optional<Integer> i5 = Optional.of(5);
-            Optional<Integer> i6 = Optional.of(6);
-            assertEquals(i5.filter((i) -> i % 2 == 0), Optional.empty());
-            assertEquals(i6.filter((i) -> i % 2 == 0), i6);
-            assertEquals(i5.map((i) -> i * i), Optional.of(25));
-            assertEquals(i6.flatMap((i) -> Optional.of(i * i)), Optional.of(36));
+            assertFalse(Optional.<Integer>empty().isPresent());
+            assertFalse(Optional.<Integer>ofNullable(null).isPresent());
+            assertTrue(Optional.ofNullable(6).isPresent());
+            assertTrue(Optional.of(6).isPresent());
+        }
+        {
+            assertThrows(NoSuchElementException.class, Optional.<Integer>empty()::get);
+            assertEquals(Optional.of(6).get(), Integer.valueOf(6));
+        }
+        {
+            assertEquals(Optional.<Integer>empty().orElse(0), Integer.valueOf(0));
+            assertEquals(Optional.of(6).orElse(0), Integer.valueOf(6));
+            assertEquals(Optional.<Integer>empty().orElseGet(() -> 0), Integer.valueOf(0));
+            assertEquals(Optional.of(6).orElseGet(() -> 0), Integer.valueOf(6));
+        }
+        {
+            assertEquals(Optional.of(6).filter(i -> i % 2 == 0), Optional.of(6));
+            assertEquals(Optional.of(6).filter(i -> i % 2 == 1), Optional.empty());
+            assertEquals(Optional.of(6).map(i -> i.toString()), Optional.of("6"));
+            assertEquals(Optional.of(6).flatMap(i -> Optional.of(i * i)), Optional.of(36));
         }
     }
 }
