@@ -132,3 +132,4 @@ Optional 是 java 8 引入的可选类型，Optional 暗示用户该值有可能
 
 - 基本类型测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/NumberTest.java>
 - 数组测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ArrayTest.java>
+- Optional 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/OptionalTest.java>
