@@ -12,7 +12,7 @@
 - `TreeMap`: 红黑树实现的 map，插入删除查找都是 O(lgn)，key 按从大到小顺序排列
 - `Hashtable`: hash 实现，线程安全，key 和 value 都不能为空，key 没有顺序
 - `LinkedHashMap`: hash + 链表实现，按插入顺序排序
-- `IdentityHashMap`: 判断 key 相等的条件是，两个引用指向同一个对象，即 `key == object`
+- `IdentityHashMap`: 判断 key 相等的条件是，两个引用指向同一个对象，即 `key == e.key`
 - `WeakHashMap`: 弱引用 map，不会获取数据的强引用，当数据被 GC 清理时，数据将被删除
 
 `Map` 的主要接口如下:
@@ -22,6 +22,7 @@
 - `get`: 获取指定 key 的 value
 - `getOrDefault`: 获取指定 key 的 value，如果没有 key，返回默认值
 - `containsKey`: 判断字典是否包含 key
+- `containsValue`: 判断字典是否包含 value
 - `keySet`: key 的集合
 - `values`: value 的集合
 - `entrySet`: 包含 key/value 的集合，主要用于遍历
@@ -46,6 +47,7 @@
     assertEquals(map.size(), 4);
     assertFalse(map.isEmpty());
     assertTrue(map.containsKey("key3"));
+    assertTrue(map.containsValue("val3"));
 
     assertEquals(map.get("key3"), "val3");
     assertEquals(map.get("key6"), null);
@@ -128,6 +130,62 @@
     assertThat(map, equalTo(Map.of(
             "key0", "val0->newVal", "key1", "val1", "key2", "val2", "key3", "newVal"
     )));
+}
+```
+
+## Hashtable
+
+`Hashtable` 的 key/value 都不允许为空
+
+``` java
+{
+    Map<Integer, Integer> map = new HashMap<>();
+    assertDoesNotThrow(() -> map.put(null, 1));
+    assertDoesNotThrow(() -> map.put(1, null));
+}
+{
+    Map<Integer, Integer> map = new Hashtable();
+    assertThrows(NullPointerException.class, () -> map.put(null, 1));
+    assertThrows(NullPointerException.class, () -> map.put(1, null));
+}
+```
+
+## IdentityHashMap
+
+`IdentityHashMap` 判断相等的条件是 key 和 entry.key 是否为同一个引用对象
+
+``` java
+Map<String, String> map = new IdentityHashMap<>();
+String key1 = new String("key1");
+map.put(key1, "val1");
+assertFalse(key1 == "key1");
+assertTrue(key1.equals("key1"));
+assertEquals(map.get(key1), "val1");
+assertEquals(map.get("key1"), null);
+```
+
+## WeakHashMap
+
+`WeakHashMap` 的 key 为弱引用，当原对象被 GC 回收时，这个 key 也会被自动删除
+
+``` java
+{
+    Map<String, String> map = new WeakHashMap<>();
+    String key1 = new String("key1");
+    map.put(key1, "val1");
+    assertEquals(map.get("key1"), "val1");
+    key1 = null;
+    System.gc();
+    assertEquals(map.get("key1"), null);
+}
+{
+    Map<String, String> map = new WeakHashMap<>();
+    String val1 = new String("val1");
+    map.put("key1", val1);
+    assertEquals(map.get("key1"), "val1");
+    val1 = null;
+    System.gc();
+    assertEquals(map.get("key1"), "val1");
 }
 ```
 

@@ -7,6 +7,8 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MapTest {
     @Test
@@ -18,6 +20,7 @@ public class MapTest {
             assertEquals(map.size(), 4);
             assertFalse(map.isEmpty());
             assertTrue(map.containsKey("key3"));
+            assertTrue(map.containsValue("val3"));
 
             assertEquals(map.get("key3"), "val3");
             assertEquals(map.get("key6"), null);
@@ -163,20 +166,49 @@ public class MapTest {
     }
 
     @Test
-    public void testIdentityHashMapMap() {
-        // 判断同一个 key 的条件是 key == e.key，必须是同一个对象才认为相等
-        IdentityHashMap<String, String> m = new IdentityHashMap<>();
-        for (int i = 0; i < 5; i++) {
-            m.put("key" + i, "val" + i);
+    public void testHashtable() {
+        {
+            Map<Integer, Integer> map = new HashMap<>();
+            assertDoesNotThrow(() -> map.put(null, 1));
+            assertDoesNotThrow(() -> map.put(1, null));
         }
-        for (int i = 0; i < 5; i++) {
-            m.put("key" + i, "val" + i + i);
+        {
+            Map<Integer, Integer> map = new Hashtable();
+            assertThrows(NullPointerException.class, () -> map.put(null, 1));
+            assertThrows(NullPointerException.class, () -> map.put(1, null));
         }
-        System.out.println(m);
-        System.out.println(m.get("key0"));
+    }
 
-        String key = "key0";
-        m.put(key, "val000");
-        assertEquals(m.get(key), "val000");
+    @Test
+    public void testIdentityHashMap() {
+        Map<String, String> map = new IdentityHashMap<>();
+        String key1 = new String("key1");
+        map.put(key1, "val1");
+        assertFalse(key1 == "key1");
+        assertTrue(key1.equals("key1"));
+        assertEquals(map.get(key1), "val1");
+        assertEquals(map.get("key1"), null);
+    }
+
+    @Test
+    public void testWeakHashMap() {
+        {
+            Map<String, String> map = new WeakHashMap<>();
+            String key1 = new String("key1");
+            map.put(key1, "val1");
+            assertEquals(map.get("key1"), "val1");
+            key1 = null;
+            System.gc();
+            assertEquals(map.get("key1"), null);
+        }
+        {
+            Map<String, String> map = new WeakHashMap<>();
+            String val1 = new String("val1");
+            map.put("key1", val1);
+            assertEquals(map.get("key1"), "val1");
+            val1 = null;
+            System.gc();
+            assertEquals(map.get("key1"), "val1");
+        }
     }
 }
