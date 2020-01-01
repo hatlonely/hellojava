@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -48,6 +49,65 @@ public class IOTest {
     @After
     public void tearDown() throws IOException {
         IOTest.deleteFile();
+    }
+
+    @Test
+    public void testInputStream() throws IOException {
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            assertEquals(in.read(), '0');
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            byte[] buf = new byte[4];
+            assertEquals(in.read(buf), 4);
+            assertArrayEquals(buf, "0123".getBytes());
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            byte[] buf = new byte[20];
+            assertEquals(in.read(buf), 10);
+            assertArrayEquals(Arrays.copyOf(buf, 10), "0123456789".getBytes());
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            byte[] buf = new byte[20];
+            assertEquals(in.read(buf, 1, 4), 4);
+            assertArrayEquals(Arrays.copyOfRange(buf, 1, 1 + 4), "0123".getBytes());
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            byte[] buf = new byte[20];
+            assertEquals(in.readNBytes(buf, 1, 4), 4);
+            assertArrayEquals(Arrays.copyOfRange(buf, 1, 1 + 4), "0123".getBytes());
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            assertArrayEquals(in.readAllBytes(), "0123456789".getBytes());
+        }
+        {
+            InputStream in = new ByteArrayInputStream("0123456789".getBytes());
+            assertEquals(in.skip(2), 2);
+            assertEquals(in.available(), 8);
+            assertEquals(in.read(), '2');
+            assertEquals(in.available(), 7);
+            in.mark(0);
+            assertEquals(in.read(), '3');
+            in.reset();
+            assertEquals(in.available(), 7);
+            assertEquals(in.read(), '3');
+            in.close();
+        }
+    }
+
+    @Test
+    public void testOutputStream() throws IOException {
+        OutputStream out = new ByteArrayOutputStream();
+        out.write('0');
+        out.write("123456789".getBytes());
+        out.write("0123456789".getBytes(), 1, 2);
+        out.flush();
+        out.close();
     }
 
     @Test
