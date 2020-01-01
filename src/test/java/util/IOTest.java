@@ -214,7 +214,7 @@ public class IOTest {
     @Test
     public void testDataStream() throws IOException {
         {
-            DataOutputStream dout = new DataOutputStream(new FileOutputStream("/tmp/test.txt"));
+            DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("/tmp/test.txt")));
             dout.writeBoolean(false);
             dout.writeByte('x');
             dout.writeShort(123);
@@ -226,7 +226,7 @@ public class IOTest {
             dout.close();
         }
         {
-            DataInputStream din = new DataInputStream(new FileInputStream("/tmp/test.txt"));
+            DataInputStream din = new DataInputStream(new BufferedInputStream(new FileInputStream("/tmp/test.txt")));
             assertEquals(din.readBoolean(), false);
             assertEquals(din.readByte(), 'x');
             assertEquals(din.readShort(), 123);

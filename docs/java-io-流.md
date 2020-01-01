@@ -229,6 +229,8 @@ writer.close();
 
 ## 字节文件流
 
+文件流关注文件的读取和写入
+
 ``` java
 {
     FileOutputStream fout = new FileOutputStream("/tmp/test.txt");
@@ -244,6 +246,8 @@ writer.close();
 
 ## 缓冲字节流
 
+缓冲字节流采用装饰者模式，装饰在其他流上，使流拥有了缓存功能，从而提高读写了效率
+
 ``` java
 {
     BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream("/tmp/test.txt"));
@@ -254,6 +258,61 @@ writer.close();
     BufferedInputStream bin = new BufferedInputStream(new FileInputStream("/tmp/test.txt"));
     assertArrayEquals(bin.readAllBytes(), "People lack the willpower, rather than strength".getBytes());
     bin.close();
+}
+```
+
+## 二进制字节流
+
+二进制字节流关注在基本数据类型的读取和写入，采用装饰者模式，能装饰在其他流上
+
+`DataInputStream` 在 `InputStream` 的基础上新增了如下接口:
+
+- `writeBoolean`: 写入一个 boolean 值
+- `writeByte`: 写入一个字节
+- `writeShort`: 写入一个短整型
+- `writeInt`: 写入一个整型
+- `writeLong`: 写入一个长整型
+- `writeFloat`: 写入一个浮点型
+- `writeDouble`: 写入一个双精度浮点型
+- `writeChar`: 写入一个字符
+- `writeUTF`: 写入一个 unicode 字符串
+
+`DataOutputStream` 在 `OutputStream` 的基础上新增了如下接口:
+
+- `readBoolean`: 读取一个 boolean 值
+- `readByte`: 读取一个字节
+- `readShort`: 读取一个 short
+- `readInt`: 读取一个整型
+- `readLong`: 读取一个长整型
+- `readFloat`: 读取一个浮点型
+- `readDouble`: 读取一个双精度浮点型
+- `readChar`: 读取一个字符
+- `readUTF`: 读取一个 unicode 字符串
+
+``` java
+{
+    DataOutputStream dout = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("/tmp/test.txt")));
+    dout.writeBoolean(false);
+    dout.writeByte('x');
+    dout.writeShort(123);
+    dout.writeInt(123456);
+    dout.writeLong(123456789);
+    dout.writeFloat((float) 123.456);
+    dout.writeDouble(123.456);
+    dout.writeUTF("Rome wasn’t built in one day");
+    dout.close();
+}
+{
+    DataInputStream din = new DataInputStream(new BufferedInputStream(new FileInputStream("/tmp/test.txt")));
+    assertEquals(din.readBoolean(), false);
+    assertEquals(din.readByte(), 'x');
+    assertEquals(din.readShort(), 123);
+    assertEquals(din.readInt(), 123456);
+    assertEquals(din.readLong(), 123456789);
+    assertEquals(din.readFloat(), (float) 123.456);
+    assertEquals(din.readDouble(), 123.456);
+    assertEquals(din.readUTF(), "Rome wasn’t built in one day");
+    din.close();
 }
 ```
 
