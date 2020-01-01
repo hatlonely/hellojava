@@ -4,7 +4,7 @@
 
 ![io 流总览](io.png)
 
-IO 流主要提供四个接口
+io 流主要提供四个接口
 
 - `InputStream`: 输入字节流
 - `OutputStream`: 输出字节流
@@ -24,7 +24,7 @@ IO 流主要提供四个接口
 - `SequenceInputStream`: 能将多个字节流合并成一个
 - `PushbackInputStream`: 能回退的字节流
 
-InputStream 提供如下接口:
+`InputStream` 提供如下接口:
 
 - `read`: 从流中读取一个字节
 - `read(buffer)`: 从流中读取字节到 buffer 中，返回真实读取的字节数
@@ -103,7 +103,7 @@ InputStream 提供如下接口:
 - `BufferedOutputStream`: 带缓冲 buffer 的输出流
 - `SequenceOutputStream`: 能将多个输出流合并成一个
 
-OutputStream 提供如下接口:
+`OutputStream` 提供如下接口:
 
 - `write`: 写入一个字节
 - `write(buffer)`: 写入 buffer 中的数据
@@ -132,7 +132,7 @@ out.close();
 - `LineNumberReader`: 带行号的字符输入流
 - `PushbackReader`: 能回退的字符输入流
 
-Reader 提供如下接口:
+`Reader` 提供如下接口:
 
 - `read`: 从流中读取一个字符
 - `read(buffer)`: 从流中读取字符到 buffer 中，返回真实读取的字符数
@@ -200,7 +200,7 @@ Reader 提供如下接口:
 - `StringWriter`: 字符串输出流
 - `BufferedWriter`: 带缓冲 buffer 的字符输出流
 
-Writer 提供如下接口:
+`Writer` 提供如下接口:
 
 - `write(char)`: 写入一个字符
 - `write(string)`: 写入一个字符串
@@ -225,6 +225,36 @@ writer.append(new StringBuilder("0123456789"));
 writer.append(new StringBuilder("0123456789"), 1, 4);
 writer.flush();
 writer.close();
+```
+
+## 字节文件流
+
+``` java
+{
+    FileOutputStream fout = new FileOutputStream("/tmp/test.txt");
+    fout.write("No patient who, who has no wisdom".getBytes());
+    fout.close();
+}
+{
+    FileInputStream fin = new FileInputStream("/tmp/test.txt");
+    assertArrayEquals(fin.readAllBytes(), "No patient who, who has no wisdom".getBytes());
+    fin.close();
+}
+```
+
+## 缓冲字节流
+
+``` java
+{
+    BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream("/tmp/test.txt"));
+    bout.write("People lack the willpower, rather than strength".getBytes());
+    bout.close();
+}
+{
+    BufferedInputStream bin = new BufferedInputStream(new FileInputStream("/tmp/test.txt"));
+    assertArrayEquals(bin.readAllBytes(), "People lack the willpower, rather than strength".getBytes());
+    bin.close();
+}
 ```
 
 ## 链接

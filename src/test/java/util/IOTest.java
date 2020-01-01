@@ -198,6 +198,20 @@ public class IOTest {
     }
 
     @Test
+    public void testBufferedStream() throws IOException {
+        {
+            BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream("/tmp/test.txt"));
+            bout.write("People lack the willpower, rather than strength".getBytes());
+            bout.close();
+        }
+        {
+            BufferedInputStream bin = new BufferedInputStream(new FileInputStream("/tmp/test.txt"));
+            assertArrayEquals(bin.readAllBytes(), "People lack the willpower, rather than strength".getBytes());
+            bin.close();
+        }
+    }
+
+    @Test
     public void testDataStream() throws IOException {
         {
             DataOutputStream dout = new DataOutputStream(new FileOutputStream("/tmp/test.txt"));
@@ -254,20 +268,6 @@ public class IOTest {
             assertEquals(point.x, 123);
             assertEquals(point.y, 456);
             oin.close();
-        }
-    }
-
-    @Test
-    public void testBufferedStream() throws IOException {
-        {
-            BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream("/tmp/test.txt"));
-            bout.write("People lack the willpower, rather than strength".getBytes());
-            bout.close();
-        }
-        {
-            BufferedInputStream bin = new BufferedInputStream(new FileInputStream("/tmp/test.txt"));
-            assertArrayEquals(bin.readAllBytes(), "People lack the willpower, rather than strength".getBytes());
-            bin.close();
         }
     }
 
