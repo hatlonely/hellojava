@@ -6,7 +6,14 @@
 
 ## Map
 
-`Map` 描述的是一种映射关系，一个 key 对应一个 value，可以添加，删除，修改和获取 key/value
+`Map` 描述的是一种映射关系，一个 key 对应一个 value，可以添加，删除，修改和获取 key/value，util 提供了多种 `Map`
+
+- `HashMap`: hash 表实现的 map，插入删除查找性能都是 O(1)，key 没有顺序
+- `TreeMap`: 红黑树实现的 map，插入删除查找都是 O(lgn)，key 按从大到小顺序排列
+- `Hashtable`: hash 实现，线程安全，key 和 value 都不能为空，key 没有顺序
+- `LinkedHashMap`: hash + 链表实现，按插入顺序排序
+- `IdentityHashMap`: 判断 key 相等的条件是，两个引用指向同一个对象，即 `key == object`
+- `WeakHashMap`: 弱引用 map，不会获取数据的强引用，当数据被 GC 清理时，数据将被删除
 
 `Map` 的主要接口如下:
 
