@@ -242,7 +242,7 @@ public class IOTest {
     @Test
     public void testObjectStream() throws IOException, ClassNotFoundException {
         {
-            ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream("/tmp/test.txt"));
+            ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("/tmp/test.txt")));
             oout.writeBoolean(false);
             oout.writeByte('x');
             oout.writeShort(123);
@@ -255,7 +255,7 @@ public class IOTest {
             oout.close();
         }
         {
-            ObjectInputStream oin = new ObjectInputStream(new FileInputStream("/tmp/test.txt"));
+            ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(new FileInputStream("/tmp/test.txt")));
             assertEquals(oin.readBoolean(), false);
             assertEquals(oin.readByte(), 'x');
             assertEquals(oin.readShort(), 123);

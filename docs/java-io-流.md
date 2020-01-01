@@ -265,7 +265,7 @@ writer.close();
 
 二进制字节流关注在基本数据类型的读取和写入，采用装饰者模式，能装饰在其他流上
 
-`DataInputStream` 在 `InputStream` 的基础上新增了如下接口:
+`DataOutputStream` 在 `OutputStream` 的基础上新增了如下接口:
 
 - `writeBoolean`: 写入一个 boolean 值
 - `writeByte`: 写入一个字节
@@ -277,7 +277,7 @@ writer.close();
 - `writeChar`: 写入一个字符
 - `writeUTF`: 写入一个 unicode 字符串
 
-`DataOutputStream` 在 `OutputStream` 的基础上新增了如下接口:
+`DataInputStream` 在 `InputStream` 的基础上新增了如下接口:
 
 - `readBoolean`: 读取一个 boolean 值
 - `readByte`: 读取一个字节
@@ -313,6 +313,133 @@ writer.close();
     assertEquals(din.readDouble(), 123.456);
     assertEquals(din.readUTF(), "Rome wasn’t built in one day");
     din.close();
+}
+```
+
+## 对象字节流
+
+对象字节流关注对象的写入和读取，同时拥有二进制字节流的所有功能，同样采用装饰者模式
+
+`ObjectOutputStream` 相比 `DataOutputStream` 新增了如下接口:
+
+- `writeObject`: 写入任何 Serializable 对象
+
+`ObjectInputStream` 相比 `DataInputStream` 新增了如下接口:
+
+- `readObject`: 从流中读取一个对象
+
+``` java
+{
+    ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("/tmp/test.txt")));
+    oout.writeBoolean(false);
+    oout.writeByte('x');
+    oout.writeShort(123);
+    oout.writeInt(123456);
+    oout.writeLong(123456789);
+    oout.writeFloat((float) 123.456);
+    oout.writeDouble(123.456);
+    oout.writeUTF("Nothing is impossible to a willing heart");
+    oout.writeObject(new Point(123, 456));
+    oout.close();
+}
+{
+    ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(new FileInputStream("/tmp/test.txt")));
+    assertEquals(oin.readBoolean(), false);
+    assertEquals(oin.readByte(), 'x');
+    assertEquals(oin.readShort(), 123);
+    assertEquals(oin.readInt(), 123456);
+    assertEquals(oin.readLong(), 123456789);
+    assertEquals(oin.readFloat(), (float) 123.456);
+    assertEquals(oin.readDouble(), 123.456);
+    assertEquals(oin.readUTF(), "Nothing is impossible to a willing heart");
+    Point point = (Point) oin.readObject();
+    assertEquals(point.x, 123);
+    assertEquals(point.y, 456);
+    oin.close();
+}
+```
+
+## 可回退字节流
+
+可回退字节流内部维护了一个固定大小的缓冲区(可通过构造函数配置 buffer 的大小)，允许将字节回退到缓冲区，如果超过了缓冲区大小，会抛出异常
+
+`PushbackInputStream` 在 `InputStream` 的基础上新增了如下接口:
+
+- `unread`: 回退一个字节
+- `unread(buffer)`: 将 buffer 中的数据回退到流的缓冲区
+- `unread(buffer, offset, length)`: 从 buffer 的 offset 处回退 length 个字节到流缓冲区
+
+``` java
+PushbackInputStream pin = new PushbackInputStream(new ByteArrayInputStream("Failure is the mother of success".getBytes()), 10);
+byte[] buf = new byte[7];
+assertEquals(pin.read(buf), 7);
+assertArrayEquals(buf, "Failure".getBytes());
+pin.unread(buf);
+assertEquals(pin.read(buf), 7);
+assertArrayEquals(buf, "Failure".getBytes());
+// 超过 buffer 的大小，抛出 IOException
+assertThrows(IOException.class, () -> pin.unread("01234567890".getBytes()));
+```
+
+## SequenceInputStream
+
+`SequenceInputStream` 将多个 `InputStream` 合并成一个
+
+``` java
+InputStream in1 = new ByteArrayInputStream("For man is man and master of his fate\n".getBytes());
+InputStream in2 = new ByteArrayInputStream("Cease to struggle and you cease to live\n".getBytes());
+Vector<InputStream> vi = new Vector<>(List.of(in1, in2));
+SequenceInputStream sin = new SequenceInputStream(vi.elements());
+assertArrayEquals(sin.readAllBytes(), "For man is man and master of his fate\nCease to struggle and you cease to live\n".getBytes());
+```
+
+## 管道字节流
+
+`PipedInputStream` 和 `PipedOutputStream` 通过调用 `connect` 方法建立连接，往 `PipedOutputStream` 写入，能从 `PipedInputStream` 读取，这种管道模式是一对一的，对一个管道流建立两次连接会抛出异常
+
+`PipedOutputStream` 在 `OutputStream` 的基础上提供如下接口:
+
+- `connect`: 与一个 `PipedInputStream` 建立连接，如果已经建立连接，将抛出异常
+
+`PipedInputStream` 在 `InputStream` 的基础上提供如下接口:
+
+- `connect`: 与一个 `PipedOutputStream` 建立连接，如果已经建立连接，将抛出异常
+
+``` java
+ExecutorService es = Executors.newCachedThreadPool();
+PipedInputStream pin = new PipedInputStream();
+PipedOutputStream pout = new PipedOutputStream();
+pin.connect(pout);
+
+es.execute(() -> {
+    try {
+        ObjectOutputStream oout = new ObjectOutputStream(pout);
+        oout.writeInt(123456);
+        oout.writeUTF("如果你还没能找到让自己热爱的事业，继续寻找，不要放弃");
+        oout.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+});
+
+es.execute(() -> {
+    try {
+        ObjectInputStream oin = new ObjectInputStream(pin);
+        assertEquals(oin.readInt(), 123456);
+        assertEquals(oin.readUTF(), "如果你还没能找到让自己热爱的事业，继续寻找，不要放弃");
+        oin.close();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+});
+
+try {
+    es.shutdown();
+    while (!es.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+        // nothing to do
+    }
+} catch (Exception e) {
+    e.printStackTrace();
 }
 ```
 
