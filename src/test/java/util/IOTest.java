@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Point implements Serializable {
     private static final long serialVersionUID = 1420672609912364160L;
-    private final int y;
     int x;
+    int y;
 
     Point(int x, int y) {
         this.x = x;
@@ -201,30 +201,58 @@ public class IOTest {
     public void testDataStream() throws IOException {
         {
             DataOutputStream dout = new DataOutputStream(new FileOutputStream("/tmp/test.txt"));
-            dout.writeInt(10);
+            dout.writeBoolean(false);
+            dout.writeByte('x');
+            dout.writeShort(123);
+            dout.writeInt(123456);
+            dout.writeLong(123456789);
+            dout.writeFloat((float) 123.456);
+            dout.writeDouble(123.456);
             dout.writeUTF("Rome wasn’t built in one day");
             dout.close();
         }
         {
             DataInputStream din = new DataInputStream(new FileInputStream("/tmp/test.txt"));
-            assertEquals(din.readInt(), 10);
+            assertEquals(din.readBoolean(), false);
+            assertEquals(din.readByte(), 'x');
+            assertEquals(din.readShort(), 123);
+            assertEquals(din.readInt(), 123456);
+            assertEquals(din.readLong(), 123456789);
+            assertEquals(din.readFloat(), (float) 123.456);
+            assertEquals(din.readDouble(), 123.456);
             assertEquals(din.readUTF(), "Rome wasn’t built in one day");
             din.close();
         }
     }
 
     @Test
-    public void testObjectStream() throws IOException {
+    public void testObjectStream() throws IOException, ClassNotFoundException {
         {
             ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream("/tmp/test.txt"));
-            oout.writeInt(10);
+            oout.writeBoolean(false);
+            oout.writeByte('x');
+            oout.writeShort(123);
+            oout.writeInt(123456);
+            oout.writeLong(123456789);
+            oout.writeFloat((float) 123.456);
+            oout.writeDouble(123.456);
             oout.writeUTF("Nothing is impossible to a willing heart");
+            oout.writeObject(new Point(123, 456));
             oout.close();
         }
         {
             ObjectInputStream oin = new ObjectInputStream(new FileInputStream("/tmp/test.txt"));
-            assertEquals(oin.readInt(), 10);
+            assertEquals(oin.readBoolean(), false);
+            assertEquals(oin.readByte(), 'x');
+            assertEquals(oin.readShort(), 123);
+            assertEquals(oin.readInt(), 123456);
+            assertEquals(oin.readLong(), 123456789);
+            assertEquals(oin.readFloat(), (float) 123.456);
+            assertEquals(oin.readDouble(), 123.456);
             assertEquals(oin.readUTF(), "Nothing is impossible to a willing heart");
+            Point point = (Point) oin.readObject();
+            assertEquals(point.x, 123);
+            assertEquals(point.y, 456);
             oin.close();
         }
     }
