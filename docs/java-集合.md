@@ -121,9 +121,9 @@ List 接口为顺序表，继承自 Collection，关注集合的定位，查找�
 
 - `first`: 最小的元素
 - `last`: 最大的元素
-- `headSet`: 头部集合
-- `tailSet`: 尾部集合
-- `subSet`: 子集
+- `headSet`: 头部集合，小于给定元素的元素构成的集合
+- `tailSet`: 尾部集合，大于等于给定元素的元素构成的集合
+- `subSet`: 子集，[from, to) 集合
 
 ``` java
 SortedSet<String> set = IntStream.range(0, 10).boxed().map(x -> "key" + x).collect(Collectors.toCollection(TreeSet::new));

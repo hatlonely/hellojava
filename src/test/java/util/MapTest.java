@@ -2,10 +2,7 @@ package util;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -103,6 +100,65 @@ public class MapTest {
             assertThat(map, equalTo(Map.of(
                     "key0", "val0->newVal", "key1", "val1", "key2", "val2", "key3", "newVal"
             )));
+        }
+    }
+
+    @Test
+    public void testSortedMap() {
+        SortedMap<String, String> map = new TreeMap<>(Map.of(
+                "key0", "val0", "key1", "val1", "key2", "val2",
+                "key3", "val3", "key4", "val4"
+        ));
+
+        assertEquals(map.firstKey(), "key0");
+        assertEquals(map.lastKey(), "key4");
+        assertThat(map.headMap("key2").keySet(), equalTo(Set.of("key0", "key1")));
+        assertThat(map.tailMap("key3").keySet(), equalTo(Set.of("key3", "key4")));
+        assertThat(map.subMap("key2", "key3").keySet(), equalTo(Set.of("key2")));
+    }
+
+    @Test
+    public void testNavigableMap() {
+        {
+            NavigableMap<String, String> map = new TreeMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2",
+                    "key3", "val3", "key4", "val4"
+            ));
+
+            assertEquals(map.lowerKey("key3"), "key2");
+            assertEquals(map.higherKey("key3"), "key4");
+            assertEquals(map.floorKey("key3"), "key3");
+            assertEquals(map.ceilingKey("key3"), "key3");
+            assertEquals(map.lowerEntry("key3").getKey(), "key2");
+            assertEquals(map.higherEntry("key3").getKey(), "key4");
+            assertEquals(map.floorEntry("key3").getKey(), "key3");
+            assertEquals(map.ceilingEntry("key3").getKey(), "key3");
+            map.remove("key3");
+            assertEquals(map.floorKey("key3"), "key2");
+            assertEquals(map.ceilingKey("key3"), "key4");
+            assertEquals(map.floorEntry("key3").getKey(), "key2");
+            assertEquals(map.ceilingEntry("key3").getKey(), "key4");
+        }
+        {
+            NavigableMap<String, String> map = new TreeMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2",
+                    "key3", "val3", "key4", "val4"
+            ));
+
+            assertEquals(map.pollFirstEntry().getKey(), "key0");
+            assertArrayEquals(map.keySet().toArray(), new String[]{"key1", "key2", "key3", "key4"});
+            assertEquals(map.pollLastEntry().getKey(), "key4");
+            assertArrayEquals(map.keySet().toArray(), new String[]{"key1", "key2", "key3"});
+        }
+        {
+            NavigableMap<String, String> map = new TreeMap<>(Map.of(
+                    "key0", "val0", "key1", "val1", "key2", "val2",
+                    "key3", "val3", "key4", "val4"
+            ));
+
+            assertArrayEquals(map.headMap("key2", true).keySet().toArray(), new String[]{"key0", "key1", "key2"});
+            assertArrayEquals(map.tailMap("key3", false).keySet().toArray(), new String[]{"key4"});
+            assertArrayEquals(map.subMap("key2", false, "key3", true).keySet().toArray(), new String[]{"key3"});
         }
     }
 

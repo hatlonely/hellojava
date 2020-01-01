@@ -132,3 +132,88 @@
 ```
 
 ## SortedMap
+
+`SortedMap` 继承自 `Map`，key 是有序的，提供了顺序相关的几个接口
+
+- `firstKey`: 最小的 key
+- `lastKey`: 最大的 key
+- `headMap`: 小于给定元素的 key 构成的 map
+- `tailMap`: 大于等于给定元素的 key 构成的 map
+- `subMap`: from 和 to 之间的元素构成的 map，包含 from 不包含 to
+
+``` java
+SortedMap<String, String> map = new TreeMap<>(Map.of(
+        "key0", "val0", "key1", "val1", "key2", "val2",
+        "key3", "val3", "key4", "val4"
+));
+
+assertEquals(map.firstKey(), "key0");
+assertEquals(map.lastKey(), "key4");
+assertThat(map.headMap("key2").keySet(), equalTo(Set.of("key0", "key1")));
+assertThat(map.tailMap("key3").keySet(), equalTo(Set.of("key3", "key4")));
+assertThat(map.subMap("key2", "key3").keySet(), equalTo(Set.of("key2")));
+```
+
+`NavigableMap` 继承自 `SortedMap`，提供了如下几个接口
+
+- `lowerKey`: 小于给定值的最大的 key
+- `higherKey`: 大于给定值的最小的 key
+- `floorKey`: 小于等于给定值的最大的 key
+- `ceilingKey`: 大于等于给定值的最小的 key
+- `lowerEntry`: 小于给定值的最大的 entry
+- `higherEntry`: 大于给定值的最小的 entry
+- `floorEntry`: 小于等于给定值的最大的 entry
+- `ceilingEntry`: 大于等于给定值的最小的 entry
+- `pollFirstEntry`: 删除并获取最小的 entry
+- `pollLastEntry`: 删除并获取最大的 entry
+- `headSet`: 头部 Map，提供额外参数是否包含给定值
+- `tailSet`: 尾部 Map，提供额外参数是否包含给定值
+- `subSet`: 子 Map，提供额外参数是否包含特定值
+
+``` java
+{
+    NavigableMap<String, String> map = new TreeMap<>(Map.of(
+            "key0", "val0", "key1", "val1", "key2", "val2",
+            "key3", "val3", "key4", "val4"
+    ));
+
+    assertEquals(map.lowerKey("key3"), "key2");
+    assertEquals(map.higherKey("key3"), "key4");
+    assertEquals(map.floorKey("key3"), "key3");
+    assertEquals(map.ceilingKey("key3"), "key3");
+    assertEquals(map.lowerEntry("key3").getKey(), "key2");
+    assertEquals(map.higherEntry("key3").getKey(), "key4");
+    assertEquals(map.floorEntry("key3").getKey(), "key3");
+    assertEquals(map.ceilingEntry("key3").getKey(), "key3");
+    map.remove("key3");
+    assertEquals(map.floorKey("key3"), "key2");
+    assertEquals(map.ceilingKey("key3"), "key4");
+    assertEquals(map.floorEntry("key3").getKey(), "key2");
+    assertEquals(map.ceilingEntry("key3").getKey(), "key4");
+}
+{
+    NavigableMap<String, String> map = new TreeMap<>(Map.of(
+            "key0", "val0", "key1", "val1", "key2", "val2",
+            "key3", "val3", "key4", "val4"
+    ));
+
+    assertEquals(map.pollFirstEntry().getKey(), "key0");
+    assertArrayEquals(map.keySet().toArray(), new String[]{"key1", "key2", "key3", "key4"});
+    assertEquals(map.pollLastEntry().getKey(), "key4");
+    assertArrayEquals(map.keySet().toArray(), new String[]{"key1", "key2", "key3"});
+}
+{
+    NavigableMap<String, String> map = new TreeMap<>(Map.of(
+            "key0", "val0", "key1", "val1", "key2", "val2",
+            "key3", "val3", "key4", "val4"
+    ));
+
+    assertArrayEquals(map.headMap("key2", true).keySet().toArray(), new String[]{"key0", "key1", "key2"});
+    assertArrayEquals(map.tailMap("key3", false).keySet().toArray(), new String[]{"key4"});
+    assertArrayEquals(map.subMap("key2", false, "key3", true).keySet().toArray(), new String[]{"key3"});
+}
+```
+
+## 链接
+
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/MapTest.java>
