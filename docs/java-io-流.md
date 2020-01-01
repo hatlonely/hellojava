@@ -27,6 +27,7 @@ IO 流主要提供四个接口
 InputStream 提供如下接口:
 
 - `read`: 从流中读取一个字节
+- `read(buffer)`: 从流中读取字节到 buffer 中，返回真实读取的字节数
 - `read(buffer, offset, length)`: 从流中读取 length 个字节，写入到 buffer 的 offset 处，返回真实读取的字节数
 - `readNBytes(buffer, offset, length)`: 和 read 一样，但是保证读取 length 个字节，除非流中没有数据
 - `readAllBytes`: 读取所有字节，返回一个字节数组
@@ -133,7 +134,14 @@ out.close();
 
 Reader 提供如下接口:
 
-- ``
+- `read`: 从流中读取一个字符
+- `read(buffer)`: 从流中读取字符到 buffer 中，返回真实读取的字符数
+- `read(buffer, offset, length)`: 从流中读取 length 个字符，写入到 buffer 的 offset 处，返回真实读取的字符数
+- `read(CharBuffer`: 从流中读取字符到 CharBuffer 中，返回真实读取的字符数
+- `skip`: 跳过前 n 个字符
+- `mark`: 标记当前读取的位置
+- `reset`: 将流指针重置到上次标记的位置
+- `close`: 关闭流，释放资源
 
 ``` java
 {
@@ -194,7 +202,30 @@ Reader 提供如下接口:
 
 Writer 提供如下接口:
 
-- ``
+- `write(char)`: 写入一个字符
+- `write(string)`: 写入一个字符串
+- `write(string, offset, length)`: 写入 string 从 offset 起的 length 个字符的数据
+- `write(char[])`: 写入字符数组中的数据
+- `write(char[], offset, length)`: 写入字符数组从 offset 起的 length 个字符的数据
+- `append(ch)`: 写入一个字符，和 write 一样
+- `append(CharSequence)`: 写入字符序列的所有数据(String, StringBuilder, StringBuffer 都是 CharSequence 的子类)
+- `append(CharSequence, offset, length)`: 写入字符序列从 offset 起的 length 个字符的数据
+- `flush`: 将缓冲区的数据刷到实际的存储中
+- `close`: 关闭流
+
+``` java
+Writer writer = new CharArrayWriter();
+writer.write('0');
+writer.write("0123456789");
+writer.write("0123456789", 1, 4);
+writer.write("0123456789".toCharArray());
+writer.write("0123456789".toCharArray(), 1, 4);
+writer.append('0');
+writer.append(new StringBuilder("0123456789"));
+writer.append(new StringBuilder("0123456789"), 1, 4);
+writer.flush();
+writer.close();
+```
 
 ## 链接
 

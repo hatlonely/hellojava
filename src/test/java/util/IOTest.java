@@ -166,6 +166,21 @@ public class IOTest {
     }
 
     @Test
+    public void testWriter() throws IOException {
+        Writer writer = new CharArrayWriter();
+        writer.write('0');
+        writer.write("0123456789");
+        writer.write("0123456789", 1, 4);
+        writer.write("0123456789".toCharArray());
+        writer.write("0123456789".toCharArray(), 1, 4);
+        writer.append('0');
+        writer.append(new StringBuilder("0123456789"));
+        writer.append(new StringBuilder("0123456789"), 1, 4);
+        writer.flush();
+        writer.close();
+    }
+
+    @Test
     public void testFile() {
         {
             File file = new File("/tmp/test.txt");
