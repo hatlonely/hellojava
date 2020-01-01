@@ -131,6 +131,7 @@ out.close();
 - `BufferedReader`: 带缓冲 buffer 的字符输入流
 - `LineNumberReader`: 带行号的字符输入流
 - `PushbackReader`: 能回退的字符输入流
+- `InputStreamReader`: 输入字节流转字符流
 
 `Reader` 提供如下接口:
 
@@ -199,6 +200,7 @@ out.close();
 - `PipedWriter`: 管道输出流，可以和 `PipedReader` 连接，通常用于线程间通信
 - `StringWriter`: 字符串输出流
 - `BufferedWriter`: 带缓冲 buffer 的字符输出流
+- `OutputStreamWriter`: 输出字节流转字符流
 
 `Writer` 提供如下接口:
 
