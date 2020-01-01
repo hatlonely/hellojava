@@ -1,22 +1,23 @@
 package util;
 
+import com.google.common.base.Charsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.CharBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Vector;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-
-//import static org.junit.Assert.*;
 
 
 class Point implements Serializable {
@@ -260,7 +261,7 @@ public class IOTest {
         pin.unread(buf);
         assertEquals(pin.read(buf), 7);
         assertArrayEquals(buf, "Failure".getBytes());
-        // 查过 buffer 的大小，抛出 IOException
+        // 超过 buffer 的大小，抛出 IOException
         assertThrows(IOException.class, () -> pin.unread("01234567890".getBytes()));
     }
 
@@ -273,13 +274,14 @@ public class IOTest {
         pr.unread(buf);
         assertEquals(pr.read(buf), 5);
         assertArrayEquals(buf, "蚍蜉撼大树".toCharArray());
+        // 超过 buffer 的大小，抛出 IOException
         assertThrows(IOException.class, () -> pr.unread("01234567890".toCharArray()));
     }
 
     @Test
     public void testFileReaderWriter() throws IOException {
         {
-            FileWriter fw = new FileWriter("/tmp/test2.txt");
+            FileWriter fw = new FileWriter("/tmp/test.txt");
             assertEquals(fw.getEncoding(), "UTF8");
             System.out.println(fw.getEncoding());
             fw.write("初学者的心态；拥有初学者的心态是件了不起的事情");
@@ -287,7 +289,7 @@ public class IOTest {
             fw.close();
         }
         {
-            FileReader fr = new FileReader("/tmp/test2.txt");
+            FileReader fr = new FileReader("/tmp/test.txt");
             assertEquals(fr.getEncoding(), "UTF8");
             StringBuilder sb = new StringBuilder();
             for (int ch = fr.read(); ch != -1; ch = fr.read()) {
@@ -301,13 +303,13 @@ public class IOTest {
     @Test
     public void testStreamReaderWriter() throws IOException {
         {
-            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream("/tmp/test1.txt"), "utf-8");
+            OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream("/tmp/test.txt"), "utf-8");
             ow.write("你究竟是想一辈子卖糖水，还是希望获得改变世界的机遇");
             ow.flush();
             ow.close();
         }
         {
-            InputStreamReader rw = new InputStreamReader(new FileInputStream("/tmp/test1.txt"), "utf-8");
+            InputStreamReader rw = new InputStreamReader(new FileInputStream("/tmp/test.txt"), "utf-8");
             StringBuilder sb = new StringBuilder();
             for (int ch = rw.read(); ch != -1; ch = rw.read()) {
                 sb.append((char) ch);
@@ -317,9 +319,160 @@ public class IOTest {
         }
     }
 
+    @Test
+    public void testBufferedReaderWriter() throws IOException {
+        {
+            // BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
+            BufferedWriter bw = Files.newBufferedWriter(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+            bw.write("穷则独善其身，达则兼济天下");
+            bw.newLine();
+            bw.write("玉不琢、不成器，人不学、不知义");
+            bw.newLine();
+            bw.close();
+        }
+        {
+            // BufferedReader br = new BufferedReader(new FileReader("/tmp/test.txt"));
+            BufferedReader br = Files.newBufferedReader(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+            assertEquals(br.readLine(), "穷则独善其身，达则兼济天下");
+            assertEquals(br.readLine(), "玉不琢、不成器，人不学、不知义");
+            assertEquals(br.readLine(), null);
+            br.close();
+        }
+        {
+            // BufferedReader br = new BufferedReader(new FileReader("/tmp/test.txt"));
+            BufferedReader br = Files.newBufferedReader(Paths.get("/tmp/test.txt"), Charsets.UTF_8);
+            assertThat(br.lines().collect(Collectors.toList()), equalTo(List.of(
+                    "穷则独善其身，达则兼济天下",
+                    "玉不琢、不成器，人不学、不知义"
+            )));
+            br.close();
+        }
+    }
 
     @Test
-    public void testFile1() {
+    public void testStringReaderWriter() throws IOException {
+        {
+            StringWriter sw = new StringWriter();
+            sw.write("学而不思则罔，思而不学则殆");
+            assertEquals(sw.getBuffer().toString(), "学而不思则罔，思而不学则殆");
+            sw.close();
+        }
+        {
+            StringReader sr = new StringReader("一年之计在于春，一日之计在于晨");
+            StringBuilder sb = new StringBuilder();
+            for (int ch = sr.read(); ch != -1; ch = sr.read()) {
+                sb.append((char) ch);
+            }
+            assertEquals(sb.toString(), "一年之计在于春，一日之计在于晨");
+        }
+    }
+
+    @Test
+    public void testLineNumberReader() throws IOException {
+        {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
+            bw.write("富贵不能淫\n贫贱不能移\n威武不能屈\n此之谓大丈夫\n");
+            bw.close();
+        }
+        {
+            LineNumberReader lr = new LineNumberReader(new BufferedReader(new FileReader("/tmp/test.txt")));
+            List<String> lines = new LinkedList<>();
+            for (String line = lr.readLine(); line != null; line = lr.readLine()) {
+                lines.add(lr.getLineNumber() + " " + line);
+            }
+            assertThat(lines, equalTo(List.of(
+                    "1 富贵不能淫", "2 贫贱不能移", "3 威武不能屈", "4 此之谓大丈夫"
+            )));
+        }
+    }
+
+    @Test
+    public void testPipedStream() throws IOException {
+        ExecutorService es = Executors.newCachedThreadPool();
+        PipedInputStream pin = new PipedInputStream();
+        PipedOutputStream pout = new PipedOutputStream();
+        pin.connect(pout);
+
+        es.execute(() -> {
+            try {
+                ObjectOutputStream oout = new ObjectOutputStream(pout);
+                oout.writeInt(123456);
+                oout.writeUTF("如果你还没能找到让自己热爱的事业，继续寻找，不要放弃");
+                oout.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        es.execute(() -> {
+            try {
+                ObjectInputStream oin = new ObjectInputStream(pin);
+                assertEquals(oin.readInt(), 123456);
+                assertEquals(oin.readUTF(), "如果你还没能找到让自己热爱的事业，继续寻找，不要放弃");
+                oin.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        try {
+            es.shutdown();
+            while (!es.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                // nothing to do
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testPipedReaderWriter() throws IOException {
+        ExecutorService es = Executors.newCachedThreadPool();
+        PipedReader pr = new PipedReader();
+        PipedWriter pw = new PipedWriter();
+        pr.connect(pw);
+
+        es.execute(() -> {
+            try {
+                BufferedWriter bw = new BufferedWriter(pw);
+                bw.write("活着就是为了改变世界，难道还有其他原因吗");
+                bw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        es.execute(() -> {
+            try {
+                BufferedReader br = new BufferedReader(pr);
+                assertEquals(br.readLine(), "活着就是为了改变世界，难道还有其他原因吗");
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        try {
+            es.shutdown();
+            while (!es.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                // nothing to do
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testScanner() throws IOException {
+        Scanner scanner = new Scanner(Paths.get("/tmp/test.txt"), "utf-8");
+        while (scanner.hasNext()) {
+            System.out.println(scanner.next());
+        }
+        scanner.close();
+    }
+
+    @Test
+    public void testFiles() {
         {
             File file = new File("/tmp/test.txt");
             assertFalse(file.isDirectory());
@@ -337,94 +490,6 @@ public class IOTest {
             for (File file : directory.listFiles()) {
                 System.out.println(file.getName());
             }
-        }
-    }
-
-    @Test
-    public void testFileReaderWriter1() throws Exception {
-        {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("/tmp/test.txt"));
-            bw.write("The Universe in a Nutshell");
-            bw.newLine();
-            bw.write("A Brief History of Time");
-            bw.newLine();
-            bw.close();
-        }
-        {
-            BufferedReader br = new BufferedReader(new FileReader("/tmp/test.txt"));
-            assertEquals(br.readLine(), "The Universe in a Nutshell");
-            assertEquals(br.readLine(), "A Brief History of Time");
-            assertEquals(br.readLine(), null);
-            br.close();
-        }
-        {
-            BufferedWriter bw = Files.newBufferedWriter(Paths.get("/tmp/test.txt"), StandardCharsets.UTF_8);
-            bw.write("果壳里的宇宙");
-            bw.newLine();
-            bw.write("时间简史");
-            bw.newLine();
-            bw.close();
-        }
-        {
-            BufferedReader br = Files.newBufferedReader(Paths.get("/tmp/test.txt"), StandardCharsets.UTF_8);
-            assertEquals(br.readLine(), "果壳里的宇宙");
-            assertEquals(br.readLine(), "时间简史");
-            assertEquals(br.readLine(), null);
-        }
-        {
-            Scanner scanner = new Scanner(Paths.get("/tmp/test.txt"), "utf-8");
-            while (scanner.hasNext()) {
-                System.out.println(scanner.next());
-            }
-            scanner.close();
-        }
-    }
-
-    @Test
-    public void testString() throws IOException {
-        StringWriter writer = new StringWriter();
-        writer.write("hello");
-        writer.write(" ");
-        writer.write("world");
-        writer.write("\n");
-        StringReader reader = new StringReader(writer.getBuffer().toString());
-        char[] buf = new char[11];
-        assertEquals(reader.read(buf), "hello world".length());
-        assertEquals(new String(buf), "hello world");
-    }
-
-    @Test
-    public void testPiped() throws IOException {
-        {
-            PipedInputStream pis = new PipedInputStream();
-            PipedOutputStream pos = new PipedOutputStream();
-            pis.connect(pos);
-            pos.write("hello world".getBytes());
-            byte[] buf = new byte[11];
-            assertEquals(pis.read(buf), "hello world".length());
-            assertEquals(new String(buf), "hello world");
-            pos.close();
-            pis.close();
-        }
-        {
-            PipedWriter pw = new PipedWriter();
-            PipedReader pr = new PipedReader();
-            pw.connect(pr);
-            pw.write("hello world");
-            char[] buf = new char[11];
-            assertEquals(pr.read(buf), "hello world".length());
-            assertEquals(new String(buf), "hello world");
-            pw.close();
-            pr.close();
-        }
-    }
-
-    @Test
-    public void testLineNumberInputStream() throws IOException {
-        LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader("/tmp/test.txt")));
-
-        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            System.out.println(reader.getLineNumber() + " " + line);
         }
     }
 }
