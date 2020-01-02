@@ -184,4 +184,4 @@ try {
 
 ## 链接
 
-- 测试代码: <>
+- 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ObjectTest.java>
