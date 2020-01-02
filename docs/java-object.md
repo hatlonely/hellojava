@@ -138,7 +138,7 @@ class DeepCopyLine {
 }
 ```
 
-## 对象同步
+## 对象锁
 
 Java 给每个对象都内置一个对象锁(monitor lock)，这个对象锁用于 `synchronized` 修饰的代码段中
 
