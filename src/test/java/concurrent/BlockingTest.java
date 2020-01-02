@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.concurrent.*;
 
-public class BlockingQueueTest {
+public class BlockingTest {
     @Test
     public void testBlockingQueue() {
         BlockingQueue<Integer> q1 = new ArrayBlockingQueue<>(10);
