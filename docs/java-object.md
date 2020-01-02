@@ -185,3 +185,4 @@ try {
 ## 链接
 
 - 测试代码: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ObjectTest.java>
+- 深入理解Object提供的阻塞和唤醒API: <http://www.throwable.club/2019/04/30/java-object-wait-notify/>
