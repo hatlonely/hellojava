@@ -82,7 +82,7 @@ assertEquals(ia.compareAndExchange(5, 15, 10), 15); // 返回老值
 - `getAndAccumulate`: 用当前值和参数一起执行 BinaryOpterator 的结果设置成当前值，返回老的值
 
 ``` java
- AtomicReference<Integer> i = new AtomicReference<>();
+AtomicReference<Integer> i = new AtomicReference<>();
 assertEquals(i.get(), null);
 assertEquals(i.getAndSet(10), null);
 assertEquals(i.get(), Integer.valueOf(10));
