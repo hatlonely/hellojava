@@ -12,3 +12,4 @@
 - 并发
   - [多线程](java-多线程.md)
   - [线程池](java-线程池.md)
+  - [atomic](java-atomic.md)
