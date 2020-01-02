@@ -140,11 +140,15 @@ class DeepCopyLine {
 
 ## 对象同步
 
-- `wait`: 唤醒阻塞在这个对象上的一个线程
+Java 给每个对象都内置一个对象锁(monitor lock)，这个对象锁用于 `synchronized` 修饰的代码段中
+
+- `wait`: 释放当前持有的对象锁，并进入阻塞状态，等待 notify 信号重新获取对象锁
 - `notify`: 唤醒阻塞在这个对象上的一个线程
 - `notifyAll`: 唤醒阻塞在这个对象上的所有线程
 
-```
+指的注意的是，用于同步的几个方法 `wait/notify/notifyAll` 只能在 `synchronized` 修饰的代码中调用
+
+``` java
 ExecutorService es = Executors.newCachedThreadPool();
 Object object = new Object();
 
