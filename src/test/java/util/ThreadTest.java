@@ -9,7 +9,6 @@ public class ThreadTest {
     @Test
     public void test() {
         Thread t = Thread.currentThread();
-        t.interrupt();
         System.out.println("id: " + t.getId());
         System.out.println("name: " + t.getName());
         System.out.println("priority: " + t.getPriority());
@@ -36,7 +35,7 @@ public class ThreadTest {
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     try {
-                        Thread.sleep(100L);
+                        Thread.sleep(100);
                         System.out.printf("%s is running %d\n", name, i);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -73,7 +72,7 @@ public class ThreadTest {
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     try {
-                        Thread.sleep(100L);
+                        Thread.sleep(100);
                         System.out.printf("%s is running %d\n", name, i);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -108,7 +107,7 @@ public class ThreadTest {
 
             @Override
             public Integer call() throws Exception {
-                Thread.sleep(100L);
+                Thread.sleep(100);
                 return random.nextInt();
             }
         }
@@ -121,15 +120,13 @@ public class ThreadTest {
 
             try {
                 System.out.println(future1.get(50, TimeUnit.MILLISECONDS));
-            } catch (TimeoutException e) {
-                System.out.println("future1 timeout");
-            } catch (Exception e) {
+            } catch (InterruptedException | TimeoutException | ExecutionException e) {
                 e.printStackTrace();
             }
 
             try {
                 System.out.println(future2.get());
-            } catch (Exception e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
