@@ -7,6 +7,23 @@ import java.util.concurrent.*;
 
 public class ThreadTest {
     @Test
+    public void test() {
+        Thread t = Thread.currentThread();
+        t.interrupt();
+        System.out.println("id: " + t.getId());
+        System.out.println("name: " + t.getName());
+        System.out.println("priority: " + t.getPriority());
+        System.out.println("state: " + t.getState());
+        System.out.println("isAlive: " + t.isAlive());
+        System.out.println("isDaemon: " + t.isDaemon());
+        System.out.println("isInterrupted: " + t.isInterrupted());
+        System.out.println("threadGroup: " + t.getThreadGroup());
+        System.out.println("contextClassLoader: " + t.getContextClassLoader());
+        System.out.println("stackTrace: " + t.getStackTrace());
+        System.out.println("uncaughtExceptionHandler: " + t.getUncaughtExceptionHandler());
+    }
+
+    @Test
     public void testThread() {
         class MyThread extends Thread {
             private final String name;
@@ -20,10 +37,10 @@ public class ThreadTest {
                 for (int i = 0; i < 5; i++) {
                     try {
                         Thread.sleep(100L);
+                        System.out.printf("%s is running %d\n", name, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    System.out.printf("%s is running %d\n", name, i);
                 }
             }
         }
@@ -57,10 +74,10 @@ public class ThreadTest {
                 for (int i = 0; i < 5; i++) {
                     try {
                         Thread.sleep(100L);
+                        System.out.printf("%s is running %d\n", name, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    System.out.printf("%s is running %d\n", name, i);
                 }
             }
         }
