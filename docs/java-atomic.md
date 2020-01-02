@@ -123,3 +123,7 @@ assertEquals(i.getStamp(), 1);
     assertEquals(j.sum(), 30);
 }
 ```
+
+## 链接
+
+- 测试链接: <https://github.com/hatlonely/hellojava/blob/master/src/test/java/concurrent/AtomicTest.java>
