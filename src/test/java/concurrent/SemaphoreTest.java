@@ -61,13 +61,22 @@ public class SemaphoreTest {
                 try {
                     while (System.currentTimeMillis() < endTime) {
                         semaphore.acquire();
-                        System.out.println("hello world");
+                        System.out.println("critical section");
                         semaphore.release();
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
+        }
+
+        try {
+            es.shutdown();
+            while (!es.awaitTermination(1, TimeUnit.SECONDS)) {
+                // nothing to do
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
