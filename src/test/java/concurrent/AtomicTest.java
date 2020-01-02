@@ -72,7 +72,11 @@ public class AtomicTest {
         AtomicReference<Integer> i = new AtomicReference<>();
         assertEquals(i.get(), null);
         assertEquals(i.getAndSet(10), null);
-        assertEquals(i.get().intValue(), 10);
+        assertEquals(i.get(), Integer.valueOf(10));
+        assertEquals(i.compareAndExchange(10, 11), Integer.valueOf(10));
+        assertTrue(i.compareAndSet(11, 12));
+        assertEquals(i.accumulateAndGet(3, (x, y) -> x + y), Integer.valueOf(15));
+        assertEquals(i.getAndAccumulate(3, (x, y) -> x + y), Integer.valueOf(15));
     }
 
     @Test
@@ -80,8 +84,8 @@ public class AtomicTest {
         AtomicStampedReference<Integer> i = new AtomicStampedReference<>(null, 0);
         assertEquals(i.getReference(), null);
         assertEquals(i.getStamp(), 0);
-        i.compareAndSet(null, 10, 0, 1);
-        assertEquals(i.getReference().intValue(), 10);
+        assertTrue(i.compareAndSet(null, 10, 0, 1));
+        assertEquals(i.getReference(), Integer.valueOf(10));
         assertEquals(i.getStamp(), 1);
     }
 
