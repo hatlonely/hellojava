@@ -1,16 +1,42 @@
----
-title: java 多线程
-date: 2018-03-17 20:48:31
-tags: [java, 多线程, 并发, runnable, thread, callable]
----
+# java 线程
 
-# java 多线程
+## 简介
 
-java 的多线程有好几种，可以继承 Thread，也可以实现 Runnable 接口，还可以实现 Callable 接口
+Thread 提供如下方法:
 
-## Thread
+- `getId`: 获取线程 id
+- `getName`: 获取线程名称
+- `getPriority`: 获取优先级
+- `getState`: 获取当前线程状态
+- `isAlive`: 线程是否还活着
+- `isDaemon`: 是否是后台线程
+- `isInterrupted`: 是否处于中断状态
+- `getThreadGroup`: 线程组
+- `getContextClassLoader`: 获取类加载器
+- `getUncaughtExceptionHandler`: 获取异常处理句柄
 
-继承 Thread，自己实现 `run` 方法，就可以定一个线程类，调用 `start` 就可以在一个新的线程里面调用 `run` 方法，如果需要等待线程结束，可以调用 `join` 方法
+``` java
+Thread t = Thread.currentThread();
+System.out.println("id: " + t.getId());
+System.out.println("name: " + t.getName());
+System.out.println("priority: " + t.getPriority());
+System.out.println("state: " + t.getState());
+System.out.println("isAlive: " + t.isAlive());
+System.out.println("isDaemon: " + t.isDaemon());
+System.out.println("isInterrupted: " + t.isInterrupted());
+System.out.println("threadGroup: " + t.getThreadGroup());
+System.out.println("contextClassLoader: " + t.getContextClassLoader());
+System.out.println("stackTrace: " + t.getStackTrace());
+System.out.println("uncaughtExceptionHandler: " + t.getUncaughtExceptionHandler());
+```
+
+线程的生命周期:
+
+![thread-life-cycle](thread-life-cycle.png)
+
+## Thread 类
+
+继承 `Thread`，实现自己的 `run` 方法，就可以定义一个线程类，调用 `start` 就可以在一个新的线程里面调用 `run` 方法，如果需要等待线程结束，可以调用 `join` 方法
 
 - `run`: 线程启动后执行的内容
 - `start`: 启动线程
@@ -28,7 +54,7 @@ class MyThread extends Thread {
     public void run() {
         for (int i = 0; i < 5; i++) {
             try {
-                Thread.sleep(100L);
+                Thread.sleep(100);
                 System.out.printf("%s is running %d\n", name, i);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -52,7 +78,11 @@ class MyThread extends Thread {
 }
 ```
 
-## Runnable
+## Runnable 接口
+
+和 Thread 差不多，只不过不直接继承 Thread，而是实现 Runnable 接口（Runable 只有一个 `run` 方法），使用上面用这个 Runnable 去构造一个 Thread，这种方式相对直接继承 Thread 的方式要更加灵活，因为 java 是单继承，如果继承了 Thread 就不能再继承别的类
+
+事实上，建议不要直接继承 Thread 类，因为从语义上来讲，Thread 也应该也只是方法运行的方式，你的类应该是可以在这种方式下运行，而不是一种 Thread 对象，从这个角度讲，Runnable 提供了更好的语义，用一个 Thread 对象去运行一个 Runable
 
 ``` java
 class MyRunnable implements Runnable {
@@ -66,7 +96,7 @@ class MyRunnable implements Runnable {
     public void run() {
         for (int i = 0; i < 5; i++) {
             try {
-                Thread.sleep(100L);
+                Thread.sleep(100);
                 System.out.printf("%s is running %d\n", name, i);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -90,24 +120,22 @@ class MyRunnable implements Runnable {
 }
 ```
 
-和 Thread 差不多，只不过不直接继承 Thread，而是实现 Runnable 接口（Runable 只有一个 `run` 方法），使用上面用这个 Runnable 去构造一个 Thread，这种方式相对直接继承 Thread 的方式要更加灵活，因为 java 是单继承，如果继承了 Thread 就不能再继承别的类
+## Callable 接口
 
-事实上，建议永远不要直接继承 Thread 类，因为从语义上来讲，Thread 也应该也只是方法运行的方式，你的类应该是可以在这种方式下运行，而不是一种 Thread 对象，从这个角度讲，Runnable 提供了更好的语义，用一个 Thread 对象去运行一个 Runable
-
-## Callable
+`Runnbale` 是没有返回值的，如果希望获取线程执行结束后的返回值，可以使用 `Callable` 接口，通过 FutureTask 封装 `Callable` 传给线程，后续可以 `FutureTask` 的 `get` 接口获取返回值，还可以设置运行超时时间，超时后抛出一个异常
 
 ``` java
 class MyCallable implements Callable<Integer> {
-    private Random random;
+    private final Random random;
 
-    public MyCallable() {
-        this.random = new Random();
+    private MyCallable() {
+        random = new Random();
     }
 
     @Override
     public Integer call() throws Exception {
-        Thread.sleep(100L);
-        return this.random.nextInt();
+        Thread.sleep(100);
+        return random.nextInt();
     }
 }
 
@@ -119,93 +147,19 @@ class MyCallable implements Callable<Integer> {
 
     try {
         System.out.println(future1.get(50, TimeUnit.MILLISECONDS));
-    } catch (TimeoutException e) {
-        System.out.println("future1 timeout");
-    } catch (Exception e) {
+    } catch (InterruptedException | TimeoutException | ExecutionException e) {
         e.printStackTrace();
     }
 
     try {
         System.out.println(future2.get());
-    } catch (Exception e) {
+    } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();
     }
 }
 ```
-
-Callable 接口也只有一个方法 `call`，和 Runnable 不同的是 Callable 允许有返回值，而这个返回值可以通过 `FutureTask.get` 获取，还可以设置任务运行的超时时间，超时后会抛出一个异常
-
-## ThreadPool
-
-``` java
-class MyCallable implements Callable<Integer> {
-    private Random random;
-
-    public MyCallable() {
-        this.random = new Random();
-    }
-
-    @Override
-    public Integer call() throws Exception {
-        Thread.sleep(100L);
-        return this.random.nextInt();
-    }
-}
-
-{
-    ExecutorService es = Executors.newFixedThreadPool(5);
-    Future<Integer> future1 = es.submit(new MyCallable());
-    Future<Integer> future2 = es.submit(new MyCallable());
-
-    try {
-        System.out.println(future1.get(50, TimeUnit.MILLISECONDS));
-    } catch (TimeoutException e) {
-        System.out.println("future1 timeout");
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
-    try {
-        System.out.println(future2.get());
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
-    es.shutdown();
-}
-```
-
-java 里面线程的创建和销毁成本比较大，所以一般会需要放到线程池里面跑，java 的基础设施就是好，这些在标准库里面都有实现，使用上面也很简单，直接 new 出一个线程池就好了，然后就可以往里面 submit Callable 对象，线程池也有很多种，上面用到的 `newFixedThreadPool` 是固定线程数的线程池，下面用到的 `newCachedThreadPool` 在线程不够用的时候会创建新线程，同时也会不断复用之前创建的线程
-
-```
-{
-    ExecutorService es = Executors.newCachedThreadPool();
-    CompletionService<Integer> cs = new ExecutorCompletionService<>(es);
-    cs.submit(new MyCallable());
-    cs.submit(new MyCallable());
-    cs.submit(new MyCallable());
-    cs.submit(new MyCallable());
-
-    try {
-        System.out.println(cs.take().get());
-        System.out.println(cs.take().get());
-        System.out.println(cs.take().get());
-        System.out.println(cs.take().get());
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-
-    es.shutdown();
-}
-```
-
-典型的生成者消费者模型里面，我们需要把生产的结果放到一个队列里面，而消费者从这个队列里面不断地去消费，`ExecutorCompletionService` 就相当于这个队列，MyCallable 的结果会写入到缓存里面，使用 `cs.take().get()` 从里面取出结果
-
-## 总结
-
-线程的创建，销毁，切换在 java 里面都是耗性能的操作，如果有需求要大量地创建线程，尽量使用线程池去复用线程
 
 ## 链接
 
-- 测试代码链接：<https://github.com/hatlonely/hellojava/blob/master/src/test/java/javase/ThreadTest.java>
+- 测试代码链接：<https://github.com/hatlonely/hellojava/blob/master/src/test/java/util/ThreadTest.java>
 - “implements Runnable” vs. “extends Thread” ：<https://stackoverflow.com/questions/541487/implements-runnable-vs-extends-thread>
