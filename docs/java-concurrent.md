@@ -4,9 +4,9 @@ concurrent 的语义是线程安全，可以再多线程的场景下使用，数
 
 concurrent 包下提供了5种数据结构，包括
 
-- `ConcurrentHashMap`: hash 实现的线程安全 map，内部采用多段锁减少竞争，提高性能
-- `ConcurrentSkipListMap`: skip list 实现的线程安全的 map
-- `ConcurrentSkipListSet`: skip list 实现的线程安全的 set
+- `ConcurrentHashMap`: hash 实现的线程安全 Map，内部采用多段锁减少竞争，提高性能
+- `ConcurrentSkipListMap`: skip list 实现的线程安全的 Map
+- `ConcurrentSkipListSet`: skip list 实现的线程安全的 Set
 - `ConcurrentLinkedQueue`: 链表实现的线程安全的 Queue
 - `ConcurrentLinkedDeque`: 链表实现的线程安全的 Deque
 
