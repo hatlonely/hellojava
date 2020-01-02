@@ -104,22 +104,50 @@ public class BlockingQueueTest {
     }
 
     @Test
-    public void testConcurrentQueue() {
-        // 这个 queue 只是一个线程安全的队列，但是并没有提供阻塞接口
-        // 作为生产者消费者队列时，需要自己处理队列为空时候的阻塞，事实上，并不建议用作生产者消费者队列
-        ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
+    public void testBlockingDeque() {
+        BlockingDeque<Integer> queue = new LinkedBlockingDeque<>();
         ExecutorService es = Executors.newCachedThreadPool();
 
+        // 生产者
         for (int i = 0; i < 3; i++) {
             es.execute(() -> {
-                for (int j = 0; j < 20; j++) {
-                    queue.offer(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                try {
+                    for (int j = 0; j < 10; j++) {
+                        queue.putFirst(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        queue.putLast(Math.abs(ThreadLocalRandom.current().nextInt() % 100));
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        queue.offerFirst(Math.abs(ThreadLocalRandom.current().nextInt() % 100), 200, TimeUnit.MILLISECONDS);
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        queue.offerLast(Math.abs(ThreadLocalRandom.current().nextInt() % 100), 200, TimeUnit.MILLISECONDS);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             });
+        }
 
+        // 消费者
+        for (int i = 0; i < 3; i++) {
             es.execute(() -> {
-                for (int j = 0; j < 20; j++) {
-                    System.out.println("poll " + queue.poll());
+                try {
+                    for (int j = 0; j < 10; j++) {
+                        System.out.println("take " + queue.takeFirst());
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        System.out.println("take " + queue.takeLast());
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        System.out.println("take " + queue.pollFirst(200, TimeUnit.MILLISECONDS));
+                    }
+                    for (int j = 0; j < 10; j++) {
+                        System.out.println("take " + queue.pollLast(200, TimeUnit.MILLISECONDS));
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             });
         }
