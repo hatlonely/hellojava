@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
@@ -19,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class NioTest {
     @Test
     public void testBuffer() {
-        Buffer cb = CharBuffer.wrap("世上本没有路，走的人多了，也便成了路");
+        CharBuffer cb = CharBuffer.wrap("世上本没有路，走的人多了，也便成了路");
         assertTrue(cb.hasRemaining());
         assertEquals(cb.position(), 0);
         assertEquals(cb.limit(), 18);
