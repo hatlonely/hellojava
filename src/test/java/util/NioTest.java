@@ -1,62 +1,61 @@
 package util;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.CharsetEncoder;
+
+import static org.junit.Assert.assertEquals;
 
 public class NioTest {
-    private static void createFile() throws IOException {
-        NioTest.deleteFile();
-        BufferedWriter bw = Files.newBufferedWriter(Paths.get("/tmp/test.txt"));
-        bw.write("果壳里的宇宙");
-        bw.newLine();
-        bw.write("时间简史");
-        bw.newLine();
-        bw.close();
-    }
-
-    private static void deleteFile() throws IOException {
-        Files.deleteIfExists(Paths.get("/tmp/test.txt"));
-    }
-
-    @Before
-    public void setUp() throws IOException {
-        NioTest.createFile();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        NioTest.deleteFile();
-    }
-
     @Test
     public void testNio() throws IOException {
-        FileInputStream in = new FileInputStream("/tmp/test.txt");
-        FileChannel channel = in.getChannel();
-        ByteBuffer bb = ByteBuffer.allocate(12);
-        CharBuffer cb = CharBuffer.allocate(12);
-        CharsetDecoder decoder = Charset.forName("utf-8").newDecoder();
+        {
+            CharsetEncoder utf8 = Charset.forName("utf-8").newEncoder();
+            FileOutputStream out = new FileOutputStream("/tmp/test.txt");
+            FileChannel channel = out.getChannel();
+            CharBuffer cb = CharBuffer.wrap("古之立大志者，不惟有超世之才，亦必有坚韧不拔之志");    // 读模式
+            ByteBuffer bb = ByteBuffer.allocate(12);    // 写模式
 
-        for (int i = channel.read(bb); i != -1; i = channel.read(bb)) {
-            bb.flip();  // 读模式切换成写模式
-            decoder.decode(bb, cb, true);   // 按 utf-8 解码
-            cb.flip();  // 读模式切换成写模式
             while (cb.hasRemaining()) {
-                System.out.println(cb.get());
+                utf8.encode(cb, bb, true);
+                bb.flip();
+                channel.write(bb);
+                bb.clear();
             }
-            bb.compact();   // 切换到写模式，保留剩下未被读取的部分(这里有可能读取到不完整的 utf-8 字节)
-            cb.clear();     // 切换到写模式，清空缓存区，丢弃未被读取的部分(这里没有未被读取的部分)
+            channel.close();
+            out.close();
+        }
+
+        {
+            CharsetDecoder utf8 = Charset.forName("utf-8").newDecoder();
+            FileInputStream in = new FileInputStream("/tmp/test.txt");
+            FileChannel channel = in.getChannel();
+            ByteBuffer bb = ByteBuffer.allocate(12);
+            CharBuffer cb = CharBuffer.allocate(12);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = channel.read(bb); i != -1; i = channel.read(bb)) {
+                bb.flip();  // 切换到读模式
+                utf8.decode(bb, cb, true);   // 按 utf-8 解码
+                cb.flip();  // 切换成到读模式
+                while (cb.hasRemaining()) {
+                    sb.append(cb.get());
+                }
+                bb.compact();   // 切换到写模式，保留剩下未被读取的部分(这里有可能读取到不完整的 utf-8 字节)
+                cb.clear();     // 切换到写模式，清空缓存区，丢弃未被读取的部分(这里没有未被读取的部分)
+            }
+
+            channel.close();
+            in.close();
+            assertEquals(sb.toString(), "古之立大志者，不惟有超世之才，亦必有坚韧不拔之志");
         }
     }
 }
