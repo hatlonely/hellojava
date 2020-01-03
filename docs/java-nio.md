@@ -16,6 +16,7 @@ nio (noblocking io) 非阻塞 io，提供了一套新的 io 处理框架，相�
 - `clear`: 清空所有数据
 - `compact`: 清空已读取的数据
 - `rewind`: 重新开始读取
+- `flip`: 切换到读模式
 
 ``` java
 CharBuffer cb = CharBuffer.wrap("世上本没有路，走的人多了，也便成了路");
