@@ -74,7 +74,7 @@ public class StreamTest {
     }
 
     @Test
-    public void testIntermediate() {
+    public void testTerminal() {
         Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).forEach(System.out::print);
         Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).forEachOrdered(System.out::print);
         assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).toArray(), equalTo(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9}));
@@ -92,7 +92,7 @@ public class StreamTest {
     }
 
     @Test
-    public void testTerminal() {
+    public void testIntermediate() {
         assertThat(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).map(x -> x * x).collect(Collectors.toList()), equalTo(List.of(
                 1, 4, 9, 16, 25, 36, 49, 64, 81
         )));
